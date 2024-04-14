@@ -10,7 +10,7 @@ class Users(models.Model):
     password = models.CharField(max_length=100)
 
     class Meta:
-        db_table = 'users'
+        db_table = 'Users'
 
 
 class Diet(models.Model):
@@ -32,7 +32,7 @@ class Exercises(models.Model):
     category = models.CharField(max_length=50)
 
     class Meta:
-        db_table = 'exercises'
+        db_table = 'Exercises'
 
 
 class Gyms(models.Model):
@@ -42,7 +42,7 @@ class Gyms(models.Model):
     address = models.CharField(max_length=80)
 
     class Meta:
-        db_table = 'gyms'
+        db_table = 'Gyms'
 
 
 class Measurements(models.Model):
@@ -72,7 +72,7 @@ class MeasurementsGoals(models.Model):
     height = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        db_table = 'measurements_goals'
+        db_table = 'Measurements_goals'
 
 
 class Reservations(models.Model):
@@ -95,7 +95,7 @@ class Trainers(models.Model):
     description = models.CharField(max_length=400)
 
     class Meta:
-        db_table = 'trainers'
+        db_table = 'Trainers'
 
 
 class TrainingGoals(models.Model):
@@ -106,7 +106,7 @@ class TrainingGoals(models.Model):
     user = models.ForeignKey(Users, on_delete=models.DO_NOTHING, db_column='user_ID')
 
     class Meta:
-        db_table = 'training_goals'
+        db_table = 'Training_goals'
 
 
 class Trainings(models.Model):
@@ -117,7 +117,7 @@ class Trainings(models.Model):
     took_place = models.BooleanField()
 
     class Meta:
-        db_table = 'trainings'
+        db_table = 'Trainings'
 
 
 class TraningExercises(models.Model):
@@ -126,4 +126,4 @@ class TraningExercises(models.Model):
     succeded = models.BooleanField()
 
     class Meta:
-        db_table = 'traning_exercises'
+        db_table = 'Traning_exercises'
