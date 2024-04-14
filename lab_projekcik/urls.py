@@ -18,8 +18,13 @@ from django.contrib import admin
 from django.urls import path
 from klub_100kilo import views
 
+from django.contrib import admin
+from django.urls import path
+from klub_100kilo.views import reservation_view, hero_page, main_page
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.hero_page, name='hero_page'),
-    path('main/', views.main_page, name='main_page'),
+    path('reservations/', reservation_view, name='reservations'),
+    path('', hero_page, name='hero_page'),
+    path('main/', main_page, name='main_page'),
 ]
