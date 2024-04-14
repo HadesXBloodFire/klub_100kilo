@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "lab-projekt"
+name = "lab-projekcik"
 version = "0.1.0"
 description = ""
 authors = ["Dawid Mularczyk <muldaw@student.agh.edu.pl>, Maciej Wilewski <mwilewski@student.agh.edu.pl>"]
@@ -9,10 +9,8 @@ readme = "README.md"
 python = "^3.12"
 django = "^5.0.4"
 psycopg2 = "^2.9.1"
-
-
-[tool.poetry.group.dev.dependencies]
-black = "^24.3.0"
+mysqlclient = "^2.2.4"
+npm = "^0.1.1"
 
 [build-system]
 requires = ["poetry-core"]
