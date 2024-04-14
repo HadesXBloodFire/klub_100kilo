@@ -15,6 +15,16 @@ files = [
 tests = ["mypy (>=0.800)", "pytest", "pytest-asyncio"]
 
 [[package]]
+name = "bulma"
+version = "1.0.1"
+description = "修改logger传入参数"
+optional = false
+python-versions = "*"
+files = [
+    {file = "bulma-1.0.1.tar.gz", hash = "sha256:29d40b5200a9d2b8bdd67804091d6287ab07d8d959bfc13b41b580d29742952f"},
+]
+
+[[package]]
 name = "django"
 version = "5.0.4"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
@@ -126,4 +136,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "75258de28d978cb22903a919da4750bd0cf33b02d34286527b8d177f38325800"
+content-hash = "c6b544a4c530fa8be3bd44f8fc427264ebcf76f3130702fd5242b3b8cd2ed125"
