@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" style="height: 100%; margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Klub 100 Kilo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero is-fullheight" style="background-color: #FFFFFF; height: 100vh;">
+        <div class="hero-body">
+            <div class="container">
+                <div class="columns is-vcentered">
+                    <div class="column is-6">
+                        <h1 class="title" style="color: #0000FF;">
+                            Klub 100 Kilo
+                        </h1>
+                        <h2 class="subtitle" style="color: #0000FF;">
+                            Please log in or sign up to access our services.
+                        </h2>
+                        <div class="buttons">
+                            <a class="button is-primary" href="/login" style="background-color: #0000FF; color: #FFFFFF;">Log in</a>
+                            <a class="button is-link" href="/signup" style="background-color: #000099; color: #FFFFFF;">Sign up</a>
+                        </div>
+                    </div>
+                    <div class="column is-6">
+                        <figure class="image">
+                            <img src="{% static 'images/hero.png' %}" alt="Man working out">
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
