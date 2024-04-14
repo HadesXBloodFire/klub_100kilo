@@ -1,78 +1,56 @@
-{% load static %}
 <!DOCTYPE html>
-<html lang="en" style="height: 100%;">
+<html style="height: 100%;">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Klub 100 Kilo</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            background: url('{% static "images/silka.png" %}') no-repeat center center fixed;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
-            background-size: cover;
-            color: #333; /* Change the color as per your requirement */
-        }
         .navbar {
-            background-color: #0000FF; /* Non-transparent blue */
+            background-color: #f7f7f7;
+            box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1);
         }
-        .navbar-item {
-            color: #FFFFFF; /* White font */
-        }
-        .navbar-brand {
-            background-color: #000099; /* Slightly different shade of blue */
-            color: #FFFFFF; /* White font */
-        }
-        .title-tile {
-            background-color: #0000CC; /* Slightly lighter blue */
-            padding: 20px;
-            text-align: center;
-        }
-        .title-tile h1 {
-            color: #FFFFFF; /* White font */
-        }
-        .logo {
-            width: 50px; /* Adjust as needed */
-            height: auto; /* Maintains aspect ratio */
-        }
-        .content-box {
-            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
-            padding: 20px;
-            border-radius: 5px;
+        .navbar-item img {
+            max-height: 3rem;
         }
     </style>
 </head>
-<body>
-    <div class="title-tile">
-        <h1 class="title is-1">Klub 100 Kilo</h1>
-    </div>
-
+<body style="display: flex; flex-direction: column; min-height: 100%;">
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="/">
-                <img class="logo" src="{% static 'images/house.png' %}" alt="Klub 100 Kilo">
+                <i class="fas fa-home"></i>
+            </a>
+
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
             </a>
         </div>
 
-        <div class="navbar-menu">
+        <div id="navbarBasicExample" class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item" href="/reservations">Reservations</a>
-                <a class="navbar-item" href="/diet">Diet</a>
-                <a class="navbar-item" href="/measurements">Measurements</a>
-                <a class="navbar-item" href="/goals">Goals</a>
+                <a class="navbar-item" href="/reservations">
+                    Reservations
+                </a>
+                <a class="navbar-item" href="/account">
+                    My Account
+                </a>
             </div>
         </div>
     </nav>
 
-    <section class="section">
-        <div class="container">
-            {% block content %}
-            {% endblock %}
+    <main style="flex: 1;">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer" style="padding: 1rem 1.5rem;">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Authors</strong> <a href="https://github.com/Davsooonowy">Dawid Mularczyk</a>,
+                <a href="https://github.com/HadesXBloodFire2024">Maciej Wilewski</a>. 2024
+            </p>
         </div>
-    </section>
+    </footer>
 </body>
 </html>
