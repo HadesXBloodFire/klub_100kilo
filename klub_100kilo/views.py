@@ -5,7 +5,7 @@ from klub_100kilo.models import Reservations, Users
 from django.contrib.auth import authenticate, login, get_user_model, login as auth_login
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth.hashers import make_password
-
+from django.contrib.auth import logout
 
 
 @login_required
@@ -30,31 +30,6 @@ def main_page(request):
 def reservation_view(request):
     return render(request, 'reservation_main_page.html')
 
-
-# def register_view(request):
-#     if request.method == "POST":
-#         form = RegisterForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('login')
-#     else:
-#         form = RegisterForm()
-#     return render(request, 'register.html', {'form': form})
-#
-#
-# def login_view(request):
-#     if request.method == "POST":
-#         form = LoginForm(request.POST)
-#         if form.is_valid():
-#             email = form.cleaned_data.get('email')
-#             password = form.cleaned_data.get('password')
-#             user = get_user_model().objects.filter(email=email).first()
-#             if user is not None and user.check_password(password):
-#                 login(request, user)
-#                 return redirect('main_page')
-#     else:
-#         form = LoginForm()
-#     return render(request, 'login.html', {'form': form})
 
 
 def register_view(request):
@@ -99,3 +74,8 @@ def login_view(request):
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('hero_page')  # or wherever you want to redirect after logout
