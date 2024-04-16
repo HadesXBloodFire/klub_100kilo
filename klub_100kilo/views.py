@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, get_user_model, login as au
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import logout
-
+from django.contrib import messages
 
 @login_required
 def main_page(request):
@@ -36,19 +36,23 @@ def register_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            # Tworzymy instancję naszego własnego modelu Users
+            email = form.cleaned_data.get('email')
+            if get_user_model().objects.filter(email=email).exists():
+                messages.error(request, 'User with this email already exists.')
+                return render(request, 'register.html', {'form': form})
+            # If the user does not exist, continue with the registration process
             user = Users()
             user.first_name = form.cleaned_data.get('first_name')
             user.last_name = form.cleaned_data.get('last_name')
             user.phone_number = form.cleaned_data.get('phone_number')
-            user.mail = form.cleaned_data.get('email')
-            user.password = make_password(form.cleaned_data.get('password'))  # Hashujemy hasło przed zapisaniem go
+            user.mail = email
+            user.password = make_password(form.cleaned_data.get('password'))  # Hash the password before saving it
             user.role = 'User'
-            user.save()  # Zapisz użytkownika do bazy danych
+            user.save()  # Save the user to the database
 
             django_user = get_user_model().objects.create_user(
-                username=form.cleaned_data.get('email'),
-                email=form.cleaned_data.get('email'),
+                username=email,
+                email=email,
                 password=form.cleaned_data.get('password'),
                 first_name=form.cleaned_data.get('first_name'),
                 last_name=form.cleaned_data.get('last_name'),
@@ -71,6 +75,8 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 return redirect('main_page')
+            else:
+                messages.error(request, 'Invalid username or password.')
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
