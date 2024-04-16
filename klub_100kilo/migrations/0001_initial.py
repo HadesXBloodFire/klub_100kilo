@@ -8,161 +8,220 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Exercises',
+            name="Exercises",
             fields=[
-                ('exercise_id', models.AutoField(primary_key=True, serialize=False)),
-                ('description', models.CharField(max_length=200)),
-                ('muscle_group', models.CharField(max_length=60)),
-                ('difficulty', models.CharField(max_length=50)),
-                ('category', models.CharField(max_length=50)),
+                ("exercise_id", models.AutoField(primary_key=True, serialize=False)),
+                ("description", models.CharField(max_length=200)),
+                ("muscle_group", models.CharField(max_length=60)),
+                ("difficulty", models.CharField(max_length=50)),
+                ("category", models.CharField(max_length=50)),
             ],
             options={
-                'db_table': 'exercises',
+                "db_table": "exercises",
             },
         ),
         migrations.CreateModel(
-            name='Gyms',
+            name="Gyms",
             fields=[
-                ('gym_id', models.AutoField(primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=80)),
-                ('phone_number', models.IntegerField()),
-                ('address', models.CharField(max_length=80)),
+                ("gym_id", models.AutoField(primary_key=True, serialize=False)),
+                ("name", models.CharField(max_length=80)),
+                ("phone_number", models.IntegerField()),
+                ("address", models.CharField(max_length=80)),
             ],
             options={
-                'db_table': 'gyms',
+                "db_table": "gyms",
             },
         ),
         migrations.CreateModel(
-            name='Users',
+            name="Users",
             fields=[
-                ('user_id', models.AutoField(primary_key=True, serialize=False)),
-                ('role', models.CharField(max_length=50)),
-                ('first_name', models.CharField(max_length=50)),
-                ('last_name', models.CharField(max_length=50)),
-                ('mail', models.CharField(max_length=100)),
-                ('phone_number', models.IntegerField()),
-                ('password', models.CharField(max_length=100)),
+                ("user_id", models.AutoField(primary_key=True, serialize=False)),
+                ("role", models.CharField(max_length=50)),
+                ("first_name", models.CharField(max_length=50)),
+                ("last_name", models.CharField(max_length=50)),
+                ("mail", models.CharField(max_length=100)),
+                ("phone_number", models.IntegerField()),
+                ("password", models.CharField(max_length=100)),
             ],
             options={
-                'db_table': 'users',
+                "db_table": "users",
             },
         ),
         migrations.CreateModel(
-            name='Trainings',
+            name="Trainings",
             fields=[
-                ('training_id', models.AutoField(primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=100)),
-                ('trainer_id', models.IntegerField(blank=True, null=True)),
-                ('took_place', models.BooleanField()),
-                ('user', models.ForeignKey(db_column='user_ID', on_delete=django.db.models.deletion.DO_NOTHING, to='klub_100kilo.users')),
+                ("training_id", models.AutoField(primary_key=True, serialize=False)),
+                ("name", models.CharField(max_length=100)),
+                ("trainer_id", models.IntegerField(blank=True, null=True)),
+                ("took_place", models.BooleanField()),
+                (
+                    "user",
+                    models.ForeignKey(
+                        db_column="user_ID", on_delete=django.db.models.deletion.DO_NOTHING, to="klub_100kilo.users"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'trainings',
+                "db_table": "trainings",
             },
         ),
         migrations.CreateModel(
-            name='Trainers',
+            name="Trainers",
             fields=[
-                ('user', models.OneToOneField(db_column='user_ID', on_delete=django.db.models.deletion.DO_NOTHING, primary_key=True, serialize=False, to='klub_100kilo.users')),
-                ('hourly_cost', models.DecimalField(decimal_places=16, max_digits=16)),
-                ('specialization', models.CharField(max_length=40)),
-                ('description', models.CharField(max_length=400)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        db_column="user_ID",
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        primary_key=True,
+                        serialize=False,
+                        to="klub_100kilo.users",
+                    ),
+                ),
+                ("hourly_cost", models.DecimalField(decimal_places=16, max_digits=16)),
+                ("specialization", models.CharField(max_length=40)),
+                ("description", models.CharField(max_length=400)),
             ],
             options={
-                'db_table': 'trainers',
+                "db_table": "trainers",
             },
         ),
         migrations.CreateModel(
-            name='Reservations',
+            name="Reservations",
             fields=[
-                ('reservation_id', models.AutoField(primary_key=True, serialize=False)),
-                ('type', models.CharField(max_length=50)),
-                ('status', models.CharField(max_length=1)),
-                ('trainer_id', models.IntegerField(blank=True, null=True)),
-                ('date', models.DateTimeField()),
-                ('gym', models.ForeignKey(db_column='gym_ID', on_delete=django.db.models.deletion.DO_NOTHING, to='klub_100kilo.gyms')),
-                ('user', models.ForeignKey(db_column='user_ID', on_delete=django.db.models.deletion.DO_NOTHING, to='klub_100kilo.users')),
+                ("reservation_id", models.AutoField(primary_key=True, serialize=False)),
+                ("type", models.CharField(max_length=50)),
+                ("status", models.CharField(max_length=1)),
+                ("trainer_id", models.IntegerField(blank=True, null=True)),
+                ("date", models.DateTimeField()),
+                (
+                    "gym",
+                    models.ForeignKey(
+                        db_column="gym_ID", on_delete=django.db.models.deletion.DO_NOTHING, to="klub_100kilo.gyms"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        db_column="user_ID", on_delete=django.db.models.deletion.DO_NOTHING, to="klub_100kilo.users"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'reservations',
+                "db_table": "reservations",
             },
         ),
         migrations.CreateModel(
-            name='MeasurementsGoals',
+            name="MeasurementsGoals",
             fields=[
-                ('goal_id', models.AutoField(primary_key=True, serialize=False)),
-                ('start_date', models.DateField()),
-                ('max_days', models.IntegerField()),
-                ('weight', models.IntegerField(blank=True, null=True)),
-                ('biceps_size', models.IntegerField(blank=True, null=True)),
-                ('bust_size', models.IntegerField(blank=True, null=True)),
-                ('waist_size', models.IntegerField(blank=True, null=True)),
-                ('dick_size', models.IntegerField(blank=True, null=True)),
-                ('thighs_size', models.IntegerField(blank=True, null=True)),
-                ('height', models.IntegerField(blank=True, null=True)),
-                ('user', models.ForeignKey(db_column='user_ID', on_delete=django.db.models.deletion.DO_NOTHING, to='klub_100kilo.users')),
+                ("goal_id", models.AutoField(primary_key=True, serialize=False)),
+                ("start_date", models.DateField()),
+                ("max_days", models.IntegerField()),
+                ("weight", models.IntegerField(blank=True, null=True)),
+                ("biceps_size", models.IntegerField(blank=True, null=True)),
+                ("bust_size", models.IntegerField(blank=True, null=True)),
+                ("waist_size", models.IntegerField(blank=True, null=True)),
+                ("dick_size", models.IntegerField(blank=True, null=True)),
+                ("thighs_size", models.IntegerField(blank=True, null=True)),
+                ("height", models.IntegerField(blank=True, null=True)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        db_column="user_ID", on_delete=django.db.models.deletion.DO_NOTHING, to="klub_100kilo.users"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'measurements_goals',
+                "db_table": "measurements_goals",
             },
         ),
         migrations.CreateModel(
-            name='Measurements',
+            name="Measurements",
             fields=[
-                ('date', models.DateField(primary_key=True, serialize=False)),
-                ('weight', models.IntegerField(blank=True, null=True)),
-                ('biceps_size', models.IntegerField(blank=True, null=True)),
-                ('bust_size', models.IntegerField(blank=True, null=True)),
-                ('waist_size', models.IntegerField(blank=True, null=True)),
-                ('dick_size', models.IntegerField(blank=True, null=True)),
-                ('thighs_size', models.IntegerField(blank=True, null=True)),
-                ('height', models.IntegerField(blank=True, null=True)),
-                ('user', models.ForeignKey(db_column='user_ID', on_delete=django.db.models.deletion.DO_NOTHING, to='klub_100kilo.users')),
+                ("date", models.DateField(primary_key=True, serialize=False)),
+                ("weight", models.IntegerField(blank=True, null=True)),
+                ("biceps_size", models.IntegerField(blank=True, null=True)),
+                ("bust_size", models.IntegerField(blank=True, null=True)),
+                ("waist_size", models.IntegerField(blank=True, null=True)),
+                ("dick_size", models.IntegerField(blank=True, null=True)),
+                ("thighs_size", models.IntegerField(blank=True, null=True)),
+                ("height", models.IntegerField(blank=True, null=True)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        db_column="user_ID", on_delete=django.db.models.deletion.DO_NOTHING, to="klub_100kilo.users"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'measurements',
+                "db_table": "measurements",
             },
         ),
         migrations.CreateModel(
-            name='Diet',
+            name="Diet",
             fields=[
-                ('date', models.DateField(primary_key=True, serialize=False)),
-                ('breakfest', models.IntegerField()),
-                ('dinner', models.IntegerField()),
-                ('other', models.IntegerField()),
-                ('user', models.ForeignKey(db_column='user_ID', on_delete=django.db.models.deletion.DO_NOTHING, to='klub_100kilo.users')),
+                ("date", models.DateField(primary_key=True, serialize=False)),
+                ("breakfest", models.IntegerField()),
+                ("dinner", models.IntegerField()),
+                ("other", models.IntegerField()),
+                (
+                    "user",
+                    models.ForeignKey(
+                        db_column="user_ID", on_delete=django.db.models.deletion.DO_NOTHING, to="klub_100kilo.users"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'diet',
+                "db_table": "diet",
             },
         ),
         migrations.CreateModel(
-            name='TrainingGoals',
+            name="TrainingGoals",
             fields=[
-                ('goal_id', models.AutoField(primary_key=True, serialize=False)),
-                ('start_date', models.DateField()),
-                ('max_days', models.IntegerField()),
-                ('muscle_group', models.IntegerField()),
-                ('user', models.ForeignKey(db_column='user_ID', on_delete=django.db.models.deletion.DO_NOTHING, to='klub_100kilo.users')),
+                ("goal_id", models.AutoField(primary_key=True, serialize=False)),
+                ("start_date", models.DateField()),
+                ("max_days", models.IntegerField()),
+                ("muscle_group", models.IntegerField()),
+                (
+                    "user",
+                    models.ForeignKey(
+                        db_column="user_ID", on_delete=django.db.models.deletion.DO_NOTHING, to="klub_100kilo.users"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'training_goals',
+                "db_table": "training_goals",
             },
         ),
         migrations.CreateModel(
-            name='TraningExercises',
+            name="TraningExercises",
             fields=[
-                ('training', models.OneToOneField(db_column='training_ID', on_delete=django.db.models.deletion.DO_NOTHING, primary_key=True, serialize=False, to='klub_100kilo.trainings')),
-                ('succeded', models.BooleanField()),
-                ('exercise', models.ForeignKey(db_column='exercise_ID', on_delete=django.db.models.deletion.DO_NOTHING, to='klub_100kilo.exercises')),
+                (
+                    "training",
+                    models.OneToOneField(
+                        db_column="training_ID",
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        primary_key=True,
+                        serialize=False,
+                        to="klub_100kilo.trainings",
+                    ),
+                ),
+                ("succeded", models.BooleanField()),
+                (
+                    "exercise",
+                    models.ForeignKey(
+                        db_column="exercise_ID",
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        to="klub_100kilo.exercises",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'traning_exercises',
+                "db_table": "traning_exercises",
             },
         ),
     ]

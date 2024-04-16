@@ -12,6 +12,10 @@ psycopg2 = "^2.9.1"
 mysqlclient = "^2.2.4"
 npm = "^0.1.1"
 bulma = "^1.0.1"
+black = "^24.4.0"
+
+[tool.black]
+line-length = 120
 
 [build-system]
 requires = ["poetry-core"]
