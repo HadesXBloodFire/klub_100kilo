@@ -6,9 +6,14 @@ class Users(models.Model):
     role = models.CharField(max_length=50)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    mail = models.CharField(max_length=100)
+    #mail = models.CharField(max_length=100, unique=True)
     phone_number = models.IntegerField()
     password = models.CharField(max_length=100)
+    last_login = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    # USERNAME_FIELD = 'mail'
+    # REQUIRED_FIELDS = ['first_name', 'last_name']
 
     class Meta:
         db_table = "Users"
@@ -17,9 +22,9 @@ class Users(models.Model):
 class Diet(models.Model):
     date = models.DateField(primary_key=True)
     user = models.ForeignKey(Users, on_delete=models.DO_NOTHING, db_column="user_ID")
-    breakfest = models.IntegerField()
-    dinner = models.IntegerField()
-    other = models.IntegerField()
+    breakfest = models.CharField(max_length=500)
+    dinner = models.CharField(max_length=500)
+    other = models.CharField(max_length=500)
 
     class Meta:
         db_table = "Diet"

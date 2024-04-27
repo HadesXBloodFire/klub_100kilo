@@ -21,9 +21,11 @@
         <tr>
           <td>{{ reservation.date }}</td>
           <td>
-            {% if reservation.trainer %} Trener: {{
-            reservation.trainer.first_name }} {{ reservation.trainer.last_name
-            }} {% else %} Brak trenera {% endif %}
+            {% if reservation.trainer and reservation.trainer.first_name and reservation.trainer.last_name %}
+            Trener: {{ reservation.trainer.first_name }} {{ reservation.trainer.last_name }}
+            {% else %}
+            Brak trenera
+            {% endif %}
           </td>
           <td>
             <a href="#"><i class="edit-icon fas fa-pencil-alt"></i></a>
