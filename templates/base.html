@@ -1,78 +1,94 @@
-<!DOCTYPE html>
-<html style="height: 100%;">
-<head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<!doctype html>
+<html style="height: 100%">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
     <style>
-        .navbar {
-            background-color: #f7f7f7;
-            box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1);
-        }
-        .navbar-item img {
-            max-height: 3rem;
-        }
+      .navbar {
+        background-color: #f7f7f7;
+        box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1);
+      }
+      .navbar-item img {
+        max-height: 3rem;
+      }
     </style>
-</head>
-<body style="display: flex; flex-direction: column; min-height: 100%;">
+  </head>
+  <body style="display: flex; flex-direction: column; min-height: 100%">
     <nav class="navbar" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <a class="navbar-item" href="/">
-                <i class="fas fa-home"></i>
-            </a>
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          <i class="fas fa-home"></i>
+        </a>
 
-            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-            </a>
-        </div>
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbarBasicExample"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
 
-        <div id="navbarBasicExample" class="navbar-menu">
-            <div class="navbar-start">
-                <a class="navbar-item" href="/reservations">
-                    Rezerwacje
-                </a>
-                <a class="navbar-item" href="/diet">
-                    Dieta
-                </a>
-                <a class="navbar-item" href="/workouts">
-                    Ułóż trening
-                </a>
-                <a class="navbar-item" href="/golas">
-                    Cele
-                </a>
-                <a class="navbar-item" href="/measurements">
-                    Pomiary
-                </a>
-            </div>
-            <div class="navbar-end">
-                <a class="navbar-item" href="/account">
-                    Profil użytkownika
-                </a>
-                <div class="navbar-item" href="/logout">
-                    <form method="POST" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="button is-danger">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="/reservations"> Rezerwacje </a>
+          <a class="navbar-item" href="/diet"> Dieta </a>
+          <a class="navbar-item" href="/workouts"> Ułóż trening </a>
+          <a class="navbar-item" href="/golas"> Cele </a>
+          <a class="navbar-item" href="/measurements"> Pomiary </a>
         </div>
+        <div class="navbar-end">
+          <a class="navbar-item" href="/account"> Profil użytkownika </a>
+          <div class="navbar-item" href="/logout">
+            <form method="POST" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="button is-danger">
+                <i class="fas fa-sign-out-alt"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </nav>
 
-    <main style="flex: 1;">
-        {% block content %}
-        {% endblock %}
-    </main>
+    <main style="flex: 1">{% block content %} {% endblock %}</main>
 
-    <footer class="footer" style="padding: 1rem 1.5rem;">
-        <div class="content has-text-centered">
-            <p>
-                <strong>Autorzy</strong> <a href="https://github.com/Davsooonowy">Dawid Mularczyk</a>,
-                <a href="https://github.com/HadesXBloodFire">Maciej Wilewski</a>. 2024
-            </p>
-        </div>
+    <footer class="footer" style="padding: 1rem 1.5rem">
+      <div class="content has-text-centered">
+        <p>
+          <strong>Autorzy</strong>
+          <a href="https://github.com/Davsooonowy">Dawid Mularczyk</a>,
+          <a href="https://github.com/HadesXBloodFire">Maciej Wilewski</a>. 2024
+        </p>
+      </div>
     </footer>
-</body>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const $navbarBurgers = Array.prototype.slice.call(
+          document.querySelectorAll(".navbar-burger"),
+          0,
+        );
+        if ($navbarBurgers.length > 0) {
+          $navbarBurgers.forEach((el) => {
+            el.addEventListener("click", () => {
+              const target = el.dataset.target;
+              const $target = document.getElementById(target);
+              el.classList.toggle("is-active");
+              $target.classList.toggle("is-active");
+            });
+          });
+        }
+      });
+    </script>
+  </body>
 </html>

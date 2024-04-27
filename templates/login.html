@@ -1,36 +1,40 @@
 <!-- login.html -->
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-</head>
-<body>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+  </head>
+  <body>
     {% if messages %}
     <div class="notification is-danger">
-        {% for message in messages %}
-        <p>{{ message }}</p>
-        {% endfor %}
+      {% for message in messages %}
+      <p>{{ message }}</p>
+      {% endfor %}
     </div>
     {% endif %}
     <section class="section">
-        <div class="container">
-            <div class="columns is-centered">
-                <div class="column is-half">
-                    <div class="box">
-                        <h1 class="title has-text-centered">Zaloguj się</h1>
-                        <form method="POST">
-                            {% csrf_token %}
-                            {{ form.as_p }}
-                            <div class="field">
-                                <div class="control has-text-centered">
-                                    <button type="submit" class="button is-link">Zaloguj się</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+      <div class="container">
+        <div class="columns is-centered">
+          <div class="column is-half">
+            <div class="box">
+              <h1 class="title has-text-centered">Zaloguj się</h1>
+              <form method="POST">
+                {% csrf_token %} {{ form.as_p }}
+                <div class="field">
+                  <div class="control has-text-centered">
+                    <button type="submit" class="button is-link">
+                      Zaloguj się
+                    </button>
+                  </div>
                 </div>
+              </form>
             </div>
+          </div>
         </div>
+      </div>
     </section>
-</body>
+  </body>
 </html>

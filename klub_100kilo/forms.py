@@ -42,3 +42,7 @@ class RegisterForm(forms.ModelForm):
 class LoginForm(forms.Form):
     email = forms.EmailField(validators=[EmailValidator()])
     password = forms.CharField(widget=forms.PasswordInput)
+
+
+class ReservationPanel(forms.Form):
+    pass
