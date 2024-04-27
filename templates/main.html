@@ -1,53 +1,49 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
+<style>
+  .edit-icon,
+  .delete-icon {
+    margin-left: 10px;
+  }
+</style>
+<section class="section">
+  <div class="container">
+    <h2 class="title">Najbliższe treningi</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Trainer</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reservation in reservations %}
+        <tr>
+          <td>{{ reservation.date }}</td>
+          <td>
+            {% if reservation.trainer %} Trener: {{
+            reservation.trainer.first_name }} {{ reservation.trainer.last_name
+            }} {% else %} Brak trenera {% endif %}
+          </td>
+          <td>
+            <a href="#"><i class="edit-icon fas fa-pencil-alt"></i></a>
+            <a href="#"><i class="delete-icon fas fa-times"></i></a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <h2 class="title">Cele treningowe</h2>
+  </div>
+</section>
 
-{% block content %}
-    <style>
-        .edit-icon,
-        .delete-icon {
-            margin-left: 10px;
-        }
-    </style>
-    <section class="section">
-        <div class="container">
-            <h2 class="title">Najbliższe treningi</h2>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Trainer</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for reservation in reservations %}
-                        <tr>
-                            <td>{{ reservation.date }}</td>
-                            <td>
-                                {% if reservation.trainer %}
-                                    Trener: {{ reservation.trainer.first_name }} {{ reservation.trainer.last_name }}
-                                {% else %}
-                                    Brak trenera
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a href="#"><i class="edit-icon fas fa-pencil-alt"></i></a>
-                                <a href="#"><i class="delete-icon fas fa-times"></i></a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </section>
-    <section class="section">
-        <div class="container">
-            <h2 class="title">Cele treningowe</h2>
-        </div>
-    </section>
-
-    <section class="section">
-        <div class="container">
-            <h2 class="title">Twoje treningi</h2>
-        </div>
-    </section>
+<section class="section">
+  <div class="container">
+    <h2 class="title">Twoje treningi</h2>
+  </div>
+</section>
 {% endblock %}
