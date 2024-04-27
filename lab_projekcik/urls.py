@@ -17,7 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from klub_100kilo.views import reservation_view, hero_page, main_page, register_view, login_view, logout_view
+from klub_100kilo.views import *
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -28,4 +28,5 @@ urlpatterns = [
     path("signup/", register_view, name="register"),
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
+    path('diet/', diet_view, name='diet'),
 ]

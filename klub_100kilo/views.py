@@ -22,7 +22,8 @@ def hero_page(request):
 
 @login_required
 def main_page(request):
-    user_reservations = Reservations.objects.filter(user_id=1, date__gt=timezone.now())
+    #print(request.user.id)
+    user_reservations = Reservations.objects.filter(user_id=request.user.id, date__gt=timezone.now())
     for reservation in user_reservations:
         reservation.trainer = Users.objects.get(user_id=reservation.trainer_id)
     return render(request, "main.html", {"reservations": user_reservations})
@@ -40,7 +41,6 @@ def register_view(request):
             if get_user_model().objects.filter(email=email).exists():
                 messages.error(request, "User with this email already exists.")
                 return render(request, "register.html", {"form": form})
-            # If the user does not exist, continue with the registration process
             user = Users()
             user.first_name = form.cleaned_data.get("first_name")
             user.last_name = form.cleaned_data.get("last_name")
@@ -48,7 +48,7 @@ def register_view(request):
             user.mail = email
             user.password = make_password(form.cleaned_data.get("password"))  # Hash the password before saving it
             user.role = "User"
-            user.save()  # Save the user to the database
+            user.save()
 
             django_user = get_user_model().objects.create_user(
                 username=email,
@@ -85,3 +85,7 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect("hero_page")  # or wherever you want to redirect after logout
+
+
+def diet_view(request):
+    return render(request, 'diet.html')
