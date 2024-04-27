@@ -22,8 +22,10 @@ def hero_page(request):
 
 @login_required
 def main_page(request):
-    #print(request.user.id)
-    user_reservations = Reservations.objects.filter(user_id=request.user.id, date__gt=timezone.now())
+    logged_in_user = get_user_model().objects.get(email=request.user.email)
+    user = Users.objects.get(mail=logged_in_user.email)
+    user_reservations = Reservations.objects.filter(user_id=user.user_id, date__gt=timezone.now())
+
     for reservation in user_reservations:
         reservation.trainer = Users.objects.get(user_id=reservation.trainer_id)
     return render(request, "main.html", {"reservations": user_reservations})
