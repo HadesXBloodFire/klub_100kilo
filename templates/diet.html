@@ -1,7 +1,301 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Dieta</h1>
-<p>Informacje o diecie będą tutaj.</p>
-{% endblock %}
+<head>
+    <style>
+        .content-center {
+            margin: auto;
+            width: 20%;
+        }
+    </style>
+</head>
+<section class="section">
+    <div class="container">
+        <div class="level">
+            <div class="level-left">
+                <button id="prev-day" class="button is-link is-light">
+                    <span class="icon">
+                        <i class="fas fa-arrow-left"></i>
+                    </span>
+                </button>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="title" id="current-day"></p>
+                </div>
+            </div>
+            <div class="level-right">
+                <button id="next-day" class="button is-link is-light">
+                    <span class="icon">
+                        <i class="fas fa-arrow-right"></i>
+                    </span>
+                </button>
+            </div>
+        </div>
+        <div class="content-center">
+            <table id="meals-table" class="table is-striped">
+                <thead>
+                    <tr>
+                        <th>Posiłek</th>
+                        <th>Opis</th>
+                        <th>Kalorie</th>
+                    </tr>
+                </thead>
+                <tbody id="meals-list">
+                </tbody>
+            </table>
+            <div class="notification is-link has-text-centered" id="calories-sum-notification">
+                <p id="calories-sum"></p>
+            </div>
+            <button id="add-meal-button" class="button is-link">Dodaj posiłek</button>
+            <button id="remove-meal-button" class="button is-link">Usuń posiłek</button>
+            <form id="meal-form" style="display: none;">
+                <div class="field">
+                    <label class="label">Nazwa posiłku</label>
+                    <div class="control">
+                        <input class="input" type="text" id="meal-name" placeholder="Wpisz nazwę posiłku">
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Opis posiłku</label>
+                    <div class="control">
+                        <textarea class="textarea" id="meal-description" placeholder="Wpisz opis posiłku"></textarea>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Kalorie</label>
+                    <div class="control">
+                        <input class="input" type="number" id="meal-calories" placeholder="Wpisz liczbę kalorii">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-link" type="submit" id="save-meal">Zapisz</button>
+                        <button class="button is-link is-light" type="button" id="cancel-meal">Anuluj</button>
+                    </div>
+                </div>
+            </form>
+            <form id="remove-meal-form" style="display: none;">
+                <div class="field">
+                    <label class="label">Nazwa posiłku</label>
+                    <div class="control">
+                        <input class="input" type="text" id="remove-meal-name" placeholder="Wpisz nazwę posiłku do usunięcia">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-link" type="submit" id="confirm-remove-meal">Usuń</button>
+                        <button class="button is-link is-light" type="button" id="cancel-remove-meal">Anuluj</button>
+                    </div>
+                </div>
+        </form>
+        </div>
+    </div>
+</section>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const userID = parseInt("{{ user_id }}")    ;
+    const currentDate = new Date();
+    const today = new Date();
+    const dayElement = document.getElementById('current-day');
+    const prevDayButton = document.getElementById('prev-day');
+    const nextDayButton = document.getElementById('next-day');
+    const addMealButton = document.getElementById('add-meal-button');
+    const removeMealButton = document.getElementById('remove-meal-button');
+    const mealForm = document.getElementById('meal-form');
+    const removeMealForm = document.getElementById('remove-meal-form');
+    const saveMealButton = document.getElementById('save-meal');
+    const cancelMealButton = document.getElementById('cancel-meal');
+    const cancelRemoveMealButton = document.getElementById('cancel-remove-meal');
+    const mealsList = document.getElementById('meals-list');
+    const caloriesSumElement = document.getElementById('calories-sum');
+
+
+    function updateDay() {
+        console.log(userID);
+        console.log(typeof userID);
+        dayElement.textContent = currentDate.toDateString();
+        fetchMeals();
+        nextDayButton.disabled = currentDate.toDateString() === today.toDateString();
+    }
+
+    function fetchMeals() {
+        fetch('https://api.github.com/gists/2658fb85a1905523f55a7fc2a1ef9675')
+            .then(response => response.json())
+            .then(data => {
+                const meals = JSON.parse(data.files['diet.json'].content);
+                const todayMeals = meals.filter(meal => meal.date === currentDate.toISOString().split('T')[0] && meal.user === userID);  // Zastąp USER_ID prawdziwym ID użytkownika
+                mealsList.innerHTML = '';
+                let caloriesSum = 0;
+                todayMeals.forEach(meal => {
+                    for (let key in meal) {
+                        if (meal.hasOwnProperty(key) && key !== 'date' && key !== 'user') {
+                            const mealRow = document.createElement('tr');
+                            const mealNameCell = document.createElement('td');
+                            const mealDescriptionCell = document.createElement('td');
+                            const mealCaloriesCell = document.createElement('td');
+
+                            mealNameCell.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+                            mealDescriptionCell.textContent = meal[key].description || 'Brak';
+                            mealCaloriesCell.textContent = meal[key].calories || 'Brak';
+
+                            mealRow.appendChild(mealNameCell);
+                            mealRow.appendChild(mealDescriptionCell);
+                            mealRow.appendChild(mealCaloriesCell);
+
+                            mealsList.appendChild(mealRow);
+
+                            caloriesSum += Number(meal[key].calories) || 0;
+                        }
+                    }
+                });
+                caloriesSumElement.textContent = 'Suma kalorii dzisiaj: ' + caloriesSum;
+            });
+    }
+
+    prevDayButton.addEventListener('click', () => {
+        currentDate.setDate(currentDate.getDate() - 1);
+        updateDay();
+    });
+
+    nextDayButton.addEventListener('click', () => {
+        const newDate = new Date(currentDate);
+        newDate.setDate(newDate.getDate() + 1);
+        if (newDate.toDateString() <= today.toDateString()) {
+            currentDate.setDate(currentDate.getDate() + 1);
+            updateDay();
+        }
+    });
+
+    addMealButton.addEventListener('click', () => {
+        mealForm.style.display = 'block';
+    });
+
+    removeMealButton.addEventListener('click', () => {
+        removeMealForm.style.display = 'block';
+        mealForm.style.display = 'none';
+    });
+
+    saveMealButton.addEventListener('click', (event) => {
+    event.preventDefault();
+
+    const mealName = document.getElementById('meal-name').value;
+    const mealDescription = document.getElementById('meal-description').value;
+    const mealCalories = document.getElementById('meal-calories').value;
+
+    const newMeal = {
+        [mealName]: {
+            description: mealDescription,
+            calories: mealCalories
+        }
+    };
+
+    fetch('https://api.github.com/gists/2658fb85a1905523f55a7fc2a1ef9675')
+        .then(response => response.json())
+        .then(data => {
+            const meals = JSON.parse(data.files['diet.json'].content);
+            const todayMeals = meals.find(meal => meal.date === currentDate.toISOString().split('T')[0] && meal.user === userID);
+
+            if (todayMeals) {
+                Object.assign(todayMeals, newMeal);
+            } else {
+                meals.push({
+                    date: currentDate.toISOString().split('T')[0],
+                    user: userID,
+                    ...newMeal
+                });
+            }
+            fetch('https://api.github.com/gists/2658fb85a1905523f55a7fc2a1ef9675', {
+            method: 'PATCH',
+            headers: {
+                'Authorization': 'token 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',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                files: {
+                    'diet.json': {
+                        content: JSON.stringify(meals)
+                    }
+                }
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Błąd sieci!');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Posiłki zostały zaktualizowane pomyślnie');
+            updateDay();
+        })
+        .catch(error => {
+            console.error('Błąd:', error);
+        });
+        });
+
+    mealForm.style.display = 'none';
+});
+
+    cancelMealButton.addEventListener('click', () => {
+        mealForm.style.display = 'none';
+    });
+
+    cancelRemoveMealButton.addEventListener('click', () => {
+        removeMealForm.style.display = 'none';
+    });
+
+    updateDay();
+
+    document.getElementById('confirm-remove-meal').addEventListener('click', (event) => {
+    event.preventDefault();
+
+    const mealName = document.getElementById('remove-meal-name').value;
+
+    fetch('https://api.github.com/gists/2658fb85a1905523f55a7fc2a1ef9675')
+        .then(response => response.json())
+        .then(data => {
+            const meals = JSON.parse(data.files['diet.json'].content);
+            const todayMeals = meals.find(meal => meal.date === currentDate.toISOString().split('T')[0] && meal.user === userID);
+
+            if (todayMeals && todayMeals[mealName]) {
+                delete todayMeals[mealName];
+
+                fetch('https://api.github.com/gists/2658fb85a1905523f55a7fc2a1ef9675', {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': 'token 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',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        files: {
+                            'diet.json': {
+                                content: JSON.stringify(meals)
+                            }
+                        }
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Błąd sieci!');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Posiłek został usunięty pomyślnie');
+                    updateDay();
+                })
+                .catch(error => {
+                    console.error('Błąd:', error);
+                });
+            }
+
+            removeMealForm.style.display = 'none';
+        });
+});
+});
+
+</script>
+
+{% endblock %}
