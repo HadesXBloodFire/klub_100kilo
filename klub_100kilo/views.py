@@ -9,6 +9,11 @@ from django.contrib.auth import logout
 from django.contrib import messages
 
 
+def get_user(request):
+    logged_in_user = get_user_model().objects.get(email=request.user.email)
+    return Users.objects.get(mail=logged_in_user.email)
+
+
 @login_required
 def main_page(request):
     return render(request, "main.html")
@@ -22,10 +27,7 @@ def hero_page(request):
 
 @login_required
 def main_page(request):
-    logged_in_user = get_user_model().objects.get(email=request.user.email)
-    user = Users.objects.get(mail=logged_in_user.email)
-    user_reservations = Reservations.objects.filter(user_id=user.user_id, date__gt=timezone.now())
-
+    user_reservations = Reservations.objects.filter(user_id=get_user(request).user_id, date__gt=timezone.now())
     for reservation in user_reservations:
         reservation.trainer = Users.objects.get(user_id=reservation.trainer_id)
     return render(request, "main.html", {"reservations": user_reservations})
@@ -90,4 +92,7 @@ def logout_view(request):
 
 
 def diet_view(request):
-    return render(request, 'diet.html')
+    context = {
+        'user_id': get_user(request).user_id,
+    }
+    return render(request, 'diet.html', context)
