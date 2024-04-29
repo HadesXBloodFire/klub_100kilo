@@ -14,5 +14,6 @@ RUN pip install poetry
 RUN poetry config virtualenvs.create false \
   && poetry install --no-interaction --no-ansi
 
-# Kopiujemy resztę kodu do katalogu roboczego
+RUN npm install fullcalendar
+
 COPY . /app/
