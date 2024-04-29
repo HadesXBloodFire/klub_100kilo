@@ -16,9 +16,12 @@
           <div class="card-content">
             <p class="title">{{ reservation.date }}</p>
             <p class="subtitle">
-              {% if reservation.trainer %} Trener: {{
-              reservation.trainer.first_name }} {{ reservation.trainer.last_name
-              }} {% else %} Brak trenera {% endif %}
+              {% if reservation.trainer %}
+              Trener: {{ reservation.trainer.first_name }}
+              {{ reservation.trainer.last_name }}
+              {% else %}
+              Brak trenera
+              {% endif %}
             </p>
             <a href="#"><i class="edit-icon fas fa-pencil-alt"></i></a>
             <a href="#"><i class="delete-icon fas fa-times"></i></a>
