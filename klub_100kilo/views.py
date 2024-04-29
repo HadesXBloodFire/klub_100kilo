@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -88,11 +90,15 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect("hero_page")  # or wherever you want to redirect after logout
+    return redirect("hero_page")
 
 
 def diet_view(request):
+    with open('nictakiego.txt', 'r') as file:
+        github_token = file.read().strip()
+
     context = {
         'user_id': get_user(request).user_id,
+        'github_token': github_token
     }
     return render(request, 'diet.html', context)
