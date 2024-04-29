@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="title">Zarezerwuj trenera</h1>
+    <form method="POST" action="{% url 'book_trainer' %}">
+      {% csrf_token %}
+      <div class="field">
+        <label class="label">Wybierz rezerwację</label>
+        <div class="control">
+          <div class="select">
+            <select name="reservation">
+              {% for reservation in reservations %}
+                <option value="{{ reservation.id }}">{{ reservation.date }} {{ reservation.time }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Wybierz trenera</label>
+        <div class="control">
+          <div class="select">
+            <select name="trainer">
+  {% for trainer in trainers %}
+    <option value="{{ trainer.user.user_id }}">{{ trainer.user.first_name }} {{ trainer.user.last_name }}</option>
+  {% endfor %}
+</select>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="control">
+          <button type="submit" class="button is-link">Zarezerwuj trenera</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

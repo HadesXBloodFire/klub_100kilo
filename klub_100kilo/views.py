@@ -1,14 +1,16 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from klub_100kilo.models import Reservations, Users
+from klub_100kilo.models import Reservations, Users, Trainers
 from django.contrib.auth import authenticate, login, get_user_model, login as auth_login
-from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm, LoginForm, EditProfileForm
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import logout
 from django.contrib import messages
 
-
+def get_user(request):
+    logged_in_user = get_user_model().objects.get(email=request.user.email)
+    return Users.objects.get(mail=logged_in_user.email)
 @login_required
 def main_page(request):
     return render(request, "main.html")
@@ -64,6 +66,10 @@ def register_view(request):
         form = RegisterForm()
     return render(request, "register.html", {"form": form})
 
+@login_required
+def account(request):
+    return render(request, 'account.html')
+
 
 def login_view(request):
     if request.method == "POST":
@@ -82,6 +88,31 @@ def login_view(request):
     return render(request, "login.html", {"form": form})
 
 
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('account')
+    else:
+        form = EditProfileForm(instance=request.user)
+    return render(request, 'edit_profile.html', {'form': form})
+
+
+def book_trainer(request):
+    if request.method == 'POST':
+        # Tutaj dodajemy logikę przypisywania trenera do rezerwacji
+        pass
+    else:
+        reservations = Reservations.objects.filter(user=get_user(request))
+        trainers = Trainers.objects.select_related('user').all()  # Pobieramy wszystkich trenerów i ich powiązane dane użytkownika
+        return render(request, 'book_trainer.html', {'reservations': reservations, 'trainers': trainers})
+def book_training(request):
+    return render(request, 'book_training.html')
+
 def logout_view(request):
     logout(request)
-    return redirect("hero_page")  # or wherever you want to redirect after logout
+    return redirect("hero_page")
+
+

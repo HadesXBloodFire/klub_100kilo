@@ -17,7 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from klub_100kilo.views import reservation_view, hero_page, main_page, register_view, login_view, logout_view
+from klub_100kilo.views import reservation_view, hero_page, main_page, register_view, login_view, logout_view, account, edit_profile, book_trainer, book_training
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -28,4 +28,11 @@ urlpatterns = [
     path("signup/", register_view, name="register"),
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
+    path('account/', account, name='account'),
+    path('account/change_password/', auth_views.PasswordChangeView.as_view(template_name='change_password.html'),name='change_password'),
+    path('account/edit_profile/', edit_profile, name='edit_profile'),  # add this line
+    path('account/password_change_done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_change_done.html'), name='password_change_done'),
+    path('book_trainer/', book_trainer, name='book_trainer'),
+    path('book_training/', book_training, name='book_training'),
+
 ]
