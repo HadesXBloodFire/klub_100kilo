@@ -95,7 +95,8 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const userID = parseInt("{{ user_id }}")    ;
+    const githubToken = "{{ github_token }}";
+    const userID = parseInt("{{ user_id }}");
     const currentDate = new Date();
     const today = new Date();
     const dayElement = document.getElementById('current-day');
@@ -113,8 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function updateDay() {
-        console.log(userID);
-        console.log(typeof userID);
         dayElement.textContent = currentDate.toDateString();
         fetchMeals();
         nextDayButton.disabled = currentDate.toDateString() === today.toDateString();
@@ -209,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch('https://api.github.com/gists/2658fb85a1905523f55a7fc2a1ef9675', {
             method: 'PATCH',
             headers: {
-                'Authorization': 'token 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',
+                'Authorization': 'token ' + githubToken,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -265,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fetch('https://api.github.com/gists/2658fb85a1905523f55a7fc2a1ef9675', {
                     method: 'PATCH',
                     headers: {
-                        'Authorization': 'token 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',
+                        'Authorization': 'token ' + githubToken,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
