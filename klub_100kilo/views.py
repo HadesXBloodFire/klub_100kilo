@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -8,9 +10,12 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import logout
 from django.contrib import messages
 
+
 def get_user(request):
     logged_in_user = get_user_model().objects.get(email=request.user.email)
     return Users.objects.get(mail=logged_in_user.email)
+
+  
 @login_required
 def main_page(request):
     return render(request, "main.html")
@@ -24,7 +29,7 @@ def hero_page(request):
 
 @login_required
 def main_page(request):
-    user_reservations = Reservations.objects.filter(user_id=1, date__gt=timezone.now())
+    user_reservations = Reservations.objects.filter(user_id=get_user(request).user_id, date__gt=timezone.now())
     for reservation in user_reservations:
         reservation.trainer = Users.objects.get(user_id=reservation.trainer_id)
     return render(request, "main.html", {"reservations": user_reservations})
@@ -42,15 +47,14 @@ def register_view(request):
             if get_user_model().objects.filter(email=email).exists():
                 messages.error(request, "User with this email already exists.")
                 return render(request, "register.html", {"form": form})
-            # If the user does not exist, continue with the registration process
             user = Users()
             user.first_name = form.cleaned_data.get("first_name")
             user.last_name = form.cleaned_data.get("last_name")
             user.phone_number = form.cleaned_data.get("phone_number")
             user.mail = email
-            user.password = make_password(form.cleaned_data.get("password"))  # Hash the password before saving it
+            user.password = make_password(form.cleaned_data.get("password"))
             user.role = "User"
-            user.save()  # Save the user to the database
+            user.save()
 
             django_user = get_user_model().objects.create_user(
                 username=email,
@@ -115,4 +119,14 @@ def logout_view(request):
     logout(request)
     return redirect("hero_page")
 
+
+def diet_view(request):
+    with open('nictakiego.txt', 'r') as file:
+        github_token = file.read().strip()
+
+    context = {
+        'user_id': get_user(request).user_id,
+        'github_token': github_token
+    }
+    return render(request, 'diet.html', context)
 

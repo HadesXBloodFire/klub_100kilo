@@ -14,17 +14,6 @@ class Users(models.Model):
         db_table = "Users"
 
 
-class Diet(models.Model):
-    date = models.DateField(primary_key=True)
-    user = models.ForeignKey(Users, on_delete=models.DO_NOTHING, db_column="user_ID")
-    breakfest = models.IntegerField()
-    dinner = models.IntegerField()
-    other = models.IntegerField()
-
-    class Meta:
-        db_table = "Diet"
-
-
 class Exercises(models.Model):
     exercise_id = models.AutoField(primary_key=True)
     description = models.CharField(max_length=200)

@@ -1,11 +1,5 @@
 from django.contrib import admin
-from .models import Diet, Exercises, Gyms, Measurements, Reservations, Users
-
-
-# Custom admin display for Diet
-@admin.register(Diet)
-class DietAdmin(admin.ModelAdmin):
-    list_display = ("date", "user", "breakfest", "dinner", "other")
+from .models import Exercises, Gyms, Measurements, Reservations, Users
 
 
 # Custom admin display for Exercises
