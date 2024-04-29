@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .fc-timegrid-slot {
+    height: 8.33% !important; /* Ustawia wysokość każdego slotu na 8.33% */
+  }
+  .fc .fc-scrollgrid-section.fc-scrollgrid-section-liquid {
+    height: auto !important;
+  }
+  .fc .fc-scrollgrid-section-content {
+    height: 100% !important;
+  }
+  .fc .fc-timegrid-slot-label-cushion {
+    padding: 10px !important;
+  }
+  .fc .fc-timegrid-slot {
+    border-bottom: 1px solid #ddd !important;
+  }
+  .fc .fc-timegrid-slot:last-child {
+    border-bottom: 1px solid #ddd !important;
+  }
+</style>
+<section class="section">
+  <div class="container">
+    <div class="level">
+      <h1 class="title level-left">Zarezerwuj trening</h1>
+      <button id='interactButton' class="button is-primary is-outlined level-right" style='display: none;'>Interact</button>
+    </div>
+    <div id='calendar'></div>
+  </div>
+</section>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var interactButton = document.getElementById('interactButton');
+    var selectedInfo = null;
+    var today = new Date();
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      locale: 'pl',
+      initialView: 'timeGridWeek',
+      slotDuration: '02:00:00',
+      minTime: '00:00:00',
+      maxTime: '24:00:00',
+      selectable: true,
+      allDaySlot: false,
+      validRange: {
+        start: today.toISOString().substring(0,10)
+      },
+      datesAboveResources: true,
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'timeGridWeek,timeGridDay'
+      },
+      slotLabelFormat: {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      },
+      select: function(info) {
+        selectedInfo = info;
+        interactButton.style.display = 'block';
+      },
+      unselect: function() {
+        selectedInfo = null;
+        interactButton.style.display = 'none';
+      },
+    });
+
+    interactButton.addEventListener('click', function() {
+      handleSelection(selectedInfo);
+      calendar.unselect();
+    });
+
+    function handleSelection(info) {
+      // Tutaj możesz dodać swój kod
+    }
+
+    calendar.render();
+  });
+</script>
+{% endblock %}

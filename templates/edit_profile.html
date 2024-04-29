@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="title">Edytuj profil</h1>
+    <div class="box">
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="button is-primary" type="submit">Zapisz zmiany</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
