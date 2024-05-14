@@ -1,0 +1,18 @@
+.fc-timegrid-slot {
+  height: 8.33% !important;
+}
+.fc .fc-scrollgrid-section.fc-scrollgrid-section-liquid {
+  height: auto !important;
+}
+.fc .fc-scrollgrid-section-content {
+  height: 100% !important;
+}
+.fc .fc-timegrid-slot-label-cushion {
+  padding: 10px !important;
+}
+.fc .fc-timegrid-slot {
+  border-bottom: 1px solid #ddd !important;
+}
+.fc .fc-timegrid-slot:last-child {
+  border-bottom: 1px solid #ddd !important;
+}
