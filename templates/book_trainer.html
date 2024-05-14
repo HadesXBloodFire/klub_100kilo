@@ -1,5 +1,4 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <section class="section">
   <div class="container">
     <h1 class="title">Zarezerwuj trenera</h1>
@@ -11,7 +10,7 @@
           <div class="select">
             <select name="reservation">
               {% for reservation in reservations %}
-                <option value="{{ reservation.id }}">{{ reservation.date }} {{ reservation.time }}</option>
+              <option value="{{ reservation.id }}">{{ reservation.date }} {{ reservation.time }}</option>
               {% endfor %}
             </select>
           </div>
@@ -22,10 +21,12 @@
         <div class="control">
           <div class="select">
             <select name="trainer">
-  {% for trainer in trainers %}
-    <option value="{{ trainer.user.user_id }}">{{ trainer.user.first_name }} {{ trainer.user.last_name }}</option>
-  {% endfor %}
-</select>
+              {% for trainer in trainers %}
+              <option value="{{ trainer.user.user_id }}">
+                {{ trainer.user.first_name }} {{ trainer.user.last_name }}
+              </option>
+              {% endfor %}
+            </select>
           </div>
         </div>
       </div>

@@ -1,24 +1,10 @@
 <!doctype html>
 <html style="height: 100%">
   <head>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
-    <style>
-      .navbar {
-        background-color: #f7f7f7;
-        box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1);
-      }
-      .navbar-item img {
-        max-height: 3rem;
-      }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="../static/styles/base.css" />
   </head>
   <body style="display: flex; flex-direction: column; min-height: 100%">
     <nav class="navbar" role="navigation" aria-label="main navigation">
@@ -27,13 +13,7 @@
           <i class="fas fa-home"></i>
         </a>
 
-        <a
-          role="button"
-          class="navbar-burger"
-          aria-label="menu"
-          aria-expanded="false"
-          data-target="navbarBasicExample"
-        >
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
@@ -73,23 +53,6 @@
         </p>
       </div>
     </footer>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const $navbarBurgers = Array.prototype.slice.call(
-          document.querySelectorAll(".navbar-burger"),
-          0,
-        );
-        if ($navbarBurgers.length > 0) {
-          $navbarBurgers.forEach((el) => {
-            el.addEventListener("click", () => {
-              const target = el.dataset.target;
-              const $target = document.getElementById(target);
-              el.classList.toggle("is-active");
-              $target.classList.toggle("is-active");
-            });
-          });
-        }
-      });
-    </script>
+    <script src="../static/scripts/base.js"></script>
   </body>
 </html>

@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Exercises, Gyms, Measurements, Reservations, Users
-
+from .models import Exercises, Gyms, Measurements, Reservations, Users, Diet
 
 # Custom admin display for Exercises
 @admin.register(Exercises)
@@ -42,3 +41,8 @@ class UsersAdmin(admin.ModelAdmin):
     list_display = ("user_id", "role", "first_name", "last_name", "mail", "phone_number")
     search_fields = ("first_name", "last_name", "mail")
     list_filter = ("role",)
+
+
+@admin.register(Diet)
+class DietAdmin(admin.ModelAdmin):
+    list_display = ("date", "user", "meal", "description", "calories")
