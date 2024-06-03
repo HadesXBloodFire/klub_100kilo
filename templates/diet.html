@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
-<!--TODO: WAZNE! zmien tego jsona na baze dancyh z opisami jako elementy wewnatrz,-->
 {% block content %}
-<link rel="stylesheet" href="../static/styles/diet.css" />
+<link rel="stylesheet" href="../static/styles/measurements.css" />
 <section class="section">
   <div class="container">
     <div class="level">
@@ -26,63 +25,202 @@
       </div>
     </div>
     <div class="content-center">
-      <table id="meals-table" class="table is-striped">
-        <thead>
-          <tr>
-            <th>Posiłek</th>
-            <th>Opis</th>
-            <th>Kalorie</th>
-          </tr>
-        </thead>
-        <tbody id="meals-list"></tbody>
-      </table>
-      <div class="notification is-link has-text-centered" id="calories-sum-notification">
-        <p id="calories-sum"></p>
+      <section class="section">
+        <div class="container">
+          <h1 class="title">Dieta</h1>
+          <form id="diet-form" method="POST">
+            {% csrf_token %}
+            <div class="field">
+              <div class="control">
+                <div class="input-label">
+                  <label class="label">Nazwa Posilku</label>
+                </div>
+                <div class="input-field">
+                  <input
+                    class="input"
+                    type="text"
+                    id="meal"
+                    name="meal"
+                    required
+                    readonly
+                    value="{% if today_diet %}{{ today_diet.meal }}{% endif %}"
+                  />
+                  <i class="edit-icon fas fa-pencil-alt"></i>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <div class="input-label">
+                  <label class="label">opis</label>
+                </div>
+                <div class="input-field">
+                  <input
+                    class="input"
+                    type="text"
+                    id="description"
+                    name="description"
+                    required
+                    readonly
+                    value="{% if today_diet %}{{ today_diet.description }}{% endif %}"
+                  />
+                  <i class="edit-icon fas fa-pencil-alt"></i>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <div class="input-label">
+                  <label class="label">Kalorie</label>
+                </div>
+                <div class="input-field">
+                  <input
+                    class="input"
+                    type="number"
+                    id="calories"
+                    name="calories"
+                    required
+                    readonly
+                    value="{% if today_diet %}{{ today_diet.calories }}{% endif %}"
+                  />
+                  <i class="edit-icon fas fa-pencil-alt"></i>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button id="submit-button" class="button is-link" type="submit" disabled>Zapisz</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+      <div
+        id="success-popup"
+        style="
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 1000;
+        "
+      >
+        <div
+          style="
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+          "
+        >
+          <p>Dane zostały pomyślnie zapisane!</p>
+        </div>
       </div>
-      <button id="add-meal-button" class="button is-link">Dodaj posiłek</button>
-      <button id="remove-meal-button" class="button is-link">Usuń posiłek</button>
-            <form id="meal-form" style="display: none;">
-        <div class="field">
-          <label class="label">Nazwa posiłku</label>
-          <div class="control">
-                        <input class="input" type="text" id="meal-name" placeholder="Wpisz nazwę posiłku">
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">Opis posiłku</label>
-          <div class="control">
-            <textarea class="textarea" id="meal-description" placeholder="Wpisz opis posiłku"></textarea>
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">Kalorie</label>
-          <div class="control">
-                        <input class="input" type="number" id="meal-calories" placeholder="Wpisz liczbę kalorii">
-          </div>
-        </div>
-        <div class="field">
-          <div class="control">
-            <button class="button is-link" type="submit" id="save-meal">Zapisz</button>
-            <button class="button is-link is-light" type="button" id="cancel-meal">Anuluj</button>
-          </div>
-        </div>
-      </form>
-            <form id="remove-meal-form" style="display: none;">
-        <div class="field">
-          <label class="label">Nazwa posiłku</label>
-          <div class="control">
-                <input class="input" type="text" id="remove-meal-name" placeholder="Wpisz nazwę posiłku do usunięcia">
-          </div>
-        </div>
-        <div class="field">
-          <div class="control">
-            <button class="button is-link" type="submit" id="confirm-remove-meal">Usuń</button>
-            <button class="button is-link is-light" type="button" id="cancel-remove-meal">Anuluj</button>
-          </div>
-        </div>
-      </form>
     </div>
   </div>
 </section>
-<script src="../static/scripts/diet.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  let currentDate = new Date();
+  let today = new Date();
+  const dayElement = document.getElementById('current-day');
+  const prevDayButton = document.getElementById('prev-day');
+  const nextDayButton = document.getElementById('next-day');
+
+  function updateDay() {
+    dayElement.textContent = currentDate.toLocaleDateString('pl-PL', options);
+    nextDayButton.disabled = currentDate.toDateString() === today.toDateString();
+
+    fetch(`/diets/${currentDate.getFullYear()}/${currentDate.getMonth() + 1}/${currentDate.getDate()}/`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (Object.keys(data).length === 0) {
+          document.getElementById('meal').value = '';
+          document.getElementById('description').value = '';
+          document.getElementById('calories').value = '';
+        } else {
+          document.getElementById('meal').value = data.meal;
+          document.getElementById('description').value = data.description;
+          document.getElementById('calories').value = data.calories;
+        }
+      });
+  }
+
+  prevDayButton.addEventListener('click', () => {
+    currentDate.setDate(currentDate.getDate() - 1);
+    currentDate = new Date(currentDate);
+    updateDay();
+  });
+
+  nextDayButton.addEventListener('click', () => {
+    const newDate = new Date(currentDate);
+    newDate.setDate(newDate.getDate() + 1);
+    if (newDate.toDateString() <= today.toDateString()) {
+      currentDate.setDate(currentDate.getDate() + 1);
+      currentDate = new Date(currentDate);
+      updateDay();
+    }
+  });
+
+  updateDay();
+
+  const editIcons = document.querySelectorAll('.edit-icon');
+  editIcons.forEach((icon) => {
+    icon.addEventListener('click', (event) => {
+      event.preventDefault();
+      const inputField = event.target.previousElementSibling;
+      inputField.readOnly = !inputField.readOnly;
+    });
+  });
+
+  const submitButton = document.getElementById('submit-button');
+  const inputs = document.querySelectorAll('input');
+
+  inputs.forEach((input) => {
+    input.addEventListener('change', () => {
+      submitButton.disabled = false;
+    });
+  });
+
+  document.getElementById('diet-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const data = {
+      date: currentDate.toISOString().split('T')[0],
+      meal: document.getElementById('meal').value,
+      description: document.getElementById('description').value,
+      calories: document.getElementById('calories').value,
+    };
+
+    fetch(`/post_diets/${currentDate.getFullYear()}/${currentDate.getMonth() + 1}/${currentDate.getDate()}/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const popup = document.getElementById('success-popup');
+        popup.style.display = 'block';
+        setTimeout(() => {
+          popup.style.display = 'none';
+        }, 2000);
+
+        updateDay();
+      })
+      .catch((error) => {
+        console.error('Błąd:', error);
+      });
+  });
+});
+</script>
 {% endblock %}
