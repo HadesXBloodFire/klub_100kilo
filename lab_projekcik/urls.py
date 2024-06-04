@@ -55,6 +55,8 @@ urlpatterns = [
     path('post_diets/<int:year>/<int:month>/<int:day>/', post_diets, name='post_diets'),
     path('api/reservations/', get_reservations, name='get_reservations'),
     path('api/add_reservation/', add_reservation, name='add_reservation'),
+    path('goals/', goals_view, name='goals'),
+    path('add_goal/', add_goal, name='add_goal'),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

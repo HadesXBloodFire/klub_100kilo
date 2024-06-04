@@ -64,9 +64,10 @@ class MeasurementsGoals(models.Model):
     waist_size = models.IntegerField(blank=True, null=True)
     thighs_size = models.IntegerField(blank=True, null=True)
     height = models.IntegerField(blank=True, null=True)
+    status = models.CharField(max_length=1, default='N')  # Add this line
 
     class Meta:
-        db_table = "Measurements_goals"
+        db_table = "Measurements_Goals"
 
 
 class Reservations(models.Model):
@@ -111,7 +112,7 @@ class TrainingGoals(models.Model):
     )
 
     class Meta:
-        db_table = "Training_goals"
+        db_table = "Training_Goals"
 
 
 class Trainings(models.Model):
@@ -140,7 +141,7 @@ class TraningExercises(models.Model):
     succeded = models.BooleanField()
 
     class Meta:
-        db_table = "Traning_exercises"
+        db_table = "Traning_Exercises"
 
 
 class Diet(models.Model):

@@ -7,7 +7,7 @@ from .serializers import ReservationSerializer
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from klub_100kilo.models import Reservations, Users, Trainers, Measurements
+from klub_100kilo.models import Reservations, Users, Trainers, Measurements, MeasurementsGoals
 from django.contrib.auth import (
     authenticate,
     login,
@@ -15,7 +15,7 @@ from django.contrib.auth import (
     login as auth_login,
 )
 
-from .forms import RegisterForm, LoginForm, EditProfileForm
+from .forms import RegisterForm, LoginForm, EditProfileForm, GoalForm
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import logout
 from django.contrib import messages
@@ -289,3 +289,41 @@ def add_reservation(request):
     reservation.save()
 
     return Response({"message": "Reservation created successfully."})
+
+def check_goals(request):
+    user = get_user(request)
+    goals = MeasurementsGoals.objects.filter(user=user)
+    measurements = Measurements.objects.filter(user=user).order_by('-date').first()
+
+    for goal in goals:
+        if measurements.date - goal.start_date <= timedelta(days=goal.max_days):
+            if measurements.weight >= goal.weight and measurements.biceps_size >= goal.biceps_size and measurements.bust_size >= goal.bust_size and measurements.waist_size >= goal.waist_size and measurements.thighs_size >= goal.thighs_size and measurements.height >= goal.height:
+                goal.status = 'Z'
+            else:
+                goal.status = 'N'
+            goal.save()
+
+@csrf_exempt
+@login_required()
+def goals_view(request):
+    user = get_user(request)
+    goals = MeasurementsGoals.objects.filter(user=user)
+    achieved_goals = goals.filter(status='Z').count()
+    total_goals = goals.count()
+    percentage = (achieved_goals / total_goals) * 100 if total_goals > 0 else 0
+    return render(request, 'goals.html', {'goals': goals, 'percentage': percentage})
+
+@login_required
+def add_goal(request):
+    if request.method == 'POST':
+        form = GoalForm(request.POST)
+        if form.is_valid():
+            goal = form.save(commit=False)
+            goal.user = get_user(request)
+            goal.save()
+            return JsonResponse({'status': 'success'})
+        else:
+            return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+    else:
+        form = GoalForm()
+    return render(request, 'add_goal.html', {'form': form})
