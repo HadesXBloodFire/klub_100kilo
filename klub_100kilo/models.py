@@ -145,12 +145,10 @@ class TraningExercises(models.Model):
 
 class Diet(models.Model):
     date = models.DateField(primary_key=True)
-    user = models.ForeignKey(
-        Users, on_delete=models.DO_NOTHING, db_column="user_ID"
-    )
-    meal = models.CharField(max_length=100)
-    description = models.CharField(max_length=600)
-    calories = models.IntegerField()
+    user = models.ForeignKey(Users, on_delete=models.DO_NOTHING, db_column="user_ID")
+    meal = models.CharField(max_length=100, null=True)
+    description = models.CharField(max_length=600, null=True)
+    calories = models.IntegerField(null=True)
 
     class Meta:
         db_table = "Diet"

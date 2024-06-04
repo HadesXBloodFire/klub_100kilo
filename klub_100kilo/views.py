@@ -14,6 +14,7 @@ from django.contrib.auth import (
     get_user_model,
     login as auth_login,
 )
+
 from .forms import RegisterForm, LoginForm, EditProfileForm
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import logout
@@ -137,46 +138,6 @@ def logout_view(request):
     return redirect("hero_page")
 
 
-@csrf_exempt
-@login_required
-@require_GET
-def get_diet_data(request, year, month, day):
-    date = timezone.datetime(year, month, day).date()
-    user = request.user
-    diet = Diet.objects.filter(user=user, date=date).first()
-    if diet:
-        data = {
-            "meal": diet.meal,
-            "description": diet.description,
-            "calories": diet.calories,
-        }
-    else:
-        data = {}
-    return JsonResponse(data)
-
-
-@csrf_exempt
-@login_required
-def post_diet_data(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        user = request.user
-        date = timezone.datetime.strptime(data.get("date"), "%Y-%m-%d").date()
-        diet = Diet.objects.filter(user=user, date=date).first()
-        if diet is None:
-            diet = Diet(user=user, date=date)
-        diet.meal = data.get("meal")
-        diet.description = data.get("description")
-        diet.calories = data.get("calories")
-        diet.save()
-        return JsonResponse({"status": "success"})
-
-
-def diet_view(request):
-    context = {"user_id": get_user(request).user_id}
-    return render(request, "diet.html", context)
-
-
 @require_GET
 def get_measurements(request, year, month, day):
     date = timezone.datetime(year, month, day).date()
@@ -238,6 +199,50 @@ def measurements_view(request):
         {"measurements": measurements, "today_measurement": today_measurement},
     )
 
+
+
+@require_GET
+def get_diets(request, year, month, day):
+    date = timezone.datetime(year, month, day).date()
+    user = get_user(request)
+    diets = Diet.objects.filter(user=user, date__lte=date).order_by('-date').first()
+    if diets:
+        data = {
+            'meal': diets.meal,
+            'description': diets.description,
+            'calories': diets.calories,
+        }
+    else:
+        data = {}
+    return JsonResponse(data)
+
+
+@csrf_exempt
+@login_required
+def post_diets(request, year, month, day):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user = get_user(request)
+        date = timezone.datetime(year, month, day).date()
+        diet = Diet.objects.filter(user=user, date=date).first()
+        if diet is None:
+            diet = Diet(user=user, date=date)
+        diet.meal = data.get('meal')
+        diet.description = data.get('description')
+        diet.calories = data.get('calories')
+        diet.save()
+        return JsonResponse({'status': 'success'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+@login_required
+def diet_view(request):
+    user = get_user(request)
+    diets = Diet.objects.filter(user=user).order_by('-date')
+    today = timezone.now().date()
+    today_diet = diets.filter(date=today).first()
+    return render(request, 'diet.html', {'diets': diets, 'today_diet': today_diet})
 
 @login_required
 @csrf_exempt
