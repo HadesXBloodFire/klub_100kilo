@@ -14,7 +14,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Exercises",
             fields=[
-                ("exercise_id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "exercise_id",
+                    models.AutoField(primary_key=True, serialize=False),
+                ),
                 ("description", models.CharField(max_length=200)),
                 ("muscle_group", models.CharField(max_length=60)),
                 ("difficulty", models.CharField(max_length=50)),
@@ -27,7 +30,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Gyms",
             fields=[
-                ("gym_id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "gym_id",
+                    models.AutoField(primary_key=True, serialize=False),
+                ),
                 ("name", models.CharField(max_length=80)),
                 ("phone_number", models.IntegerField()),
                 ("address", models.CharField(max_length=80)),
@@ -39,7 +45,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Users",
             fields=[
-                ("user_id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "user_id",
+                    models.AutoField(primary_key=True, serialize=False),
+                ),
                 ("role", models.CharField(max_length=50)),
                 ("first_name", models.CharField(max_length=50)),
                 ("last_name", models.CharField(max_length=50)),
@@ -54,14 +63,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Trainings",
             fields=[
-                ("training_id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "training_id",
+                    models.AutoField(primary_key=True, serialize=False),
+                ),
                 ("name", models.CharField(max_length=100)),
                 ("trainer_id", models.IntegerField(blank=True, null=True)),
                 ("took_place", models.BooleanField()),
                 (
                     "user",
                     models.ForeignKey(
-                        db_column="user_ID", on_delete=django.db.models.deletion.DO_NOTHING, to="klub_100kilo.users"
+                        db_column="user_ID",
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        to="klub_100kilo.users",
                     ),
                 ),
             ],
@@ -82,7 +96,10 @@ class Migration(migrations.Migration):
                         to="klub_100kilo.users",
                     ),
                 ),
-                ("hourly_cost", models.DecimalField(decimal_places=16, max_digits=16)),
+                (
+                    "hourly_cost",
+                    models.DecimalField(decimal_places=16, max_digits=16),
+                ),
                 ("specialization", models.CharField(max_length=40)),
                 ("description", models.CharField(max_length=400)),
             ],
@@ -93,7 +110,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Reservations",
             fields=[
-                ("reservation_id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "reservation_id",
+                    models.AutoField(primary_key=True, serialize=False),
+                ),
                 ("type", models.CharField(max_length=50)),
                 ("status", models.CharField(max_length=1)),
                 ("trainer_id", models.IntegerField(blank=True, null=True)),
@@ -101,13 +121,17 @@ class Migration(migrations.Migration):
                 (
                     "gym",
                     models.ForeignKey(
-                        db_column="gym_ID", on_delete=django.db.models.deletion.DO_NOTHING, to="klub_100kilo.gyms"
+                        db_column="gym_ID",
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        to="klub_100kilo.gyms",
                     ),
                 ),
                 (
                     "user",
                     models.ForeignKey(
-                        db_column="user_ID", on_delete=django.db.models.deletion.DO_NOTHING, to="klub_100kilo.users"
+                        db_column="user_ID",
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        to="klub_100kilo.users",
                     ),
                 ),
             ],
@@ -118,7 +142,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="MeasurementsGoals",
             fields=[
-                ("goal_id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "goal_id",
+                    models.AutoField(primary_key=True, serialize=False),
+                ),
                 ("start_date", models.DateField()),
                 ("max_days", models.IntegerField()),
                 ("weight", models.IntegerField(blank=True, null=True)),
@@ -130,7 +157,9 @@ class Migration(migrations.Migration):
                 (
                     "user",
                     models.ForeignKey(
-                        db_column="user_ID", on_delete=django.db.models.deletion.DO_NOTHING, to="klub_100kilo.users"
+                        db_column="user_ID",
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        to="klub_100kilo.users",
                     ),
                 ),
             ],
@@ -151,7 +180,9 @@ class Migration(migrations.Migration):
                 (
                     "user",
                     models.ForeignKey(
-                        db_column="user_ID", on_delete=django.db.models.deletion.DO_NOTHING, to="klub_100kilo.users"
+                        db_column="user_ID",
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        to="klub_100kilo.users",
                     ),
                 ),
             ],
@@ -169,7 +200,9 @@ class Migration(migrations.Migration):
                 (
                     "user",
                     models.ForeignKey(
-                        db_column="user_ID", on_delete=django.db.models.deletion.DO_NOTHING, to="klub_100kilo.users"
+                        db_column="user_ID",
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        to="klub_100kilo.users",
                     ),
                 ),
             ],
@@ -180,14 +213,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="TrainingGoals",
             fields=[
-                ("goal_id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "goal_id",
+                    models.AutoField(primary_key=True, serialize=False),
+                ),
                 ("start_date", models.DateField()),
                 ("max_days", models.IntegerField()),
                 ("muscle_group", models.IntegerField()),
                 (
                     "user",
                     models.ForeignKey(
-                        db_column="user_ID", on_delete=django.db.models.deletion.DO_NOTHING, to="klub_100kilo.users"
+                        db_column="user_ID",
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        to="klub_100kilo.users",
                     ),
                 ),
             ],
