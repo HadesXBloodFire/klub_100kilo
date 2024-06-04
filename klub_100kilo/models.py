@@ -37,7 +37,9 @@ class Gyms(models.Model):
 
 class Measurements(models.Model):
     date = models.DateField(primary_key=True)
-    user = models.ForeignKey(Users, on_delete=models.DO_NOTHING, db_column="user_ID")
+    user = models.ForeignKey(
+        Users, on_delete=models.DO_NOTHING, db_column="user_ID"
+    )
     weight = models.IntegerField(blank=True, null=True)
     biceps_size = models.IntegerField(blank=True, null=True)
     bust_size = models.IntegerField(blank=True, null=True)
@@ -51,7 +53,9 @@ class Measurements(models.Model):
 
 class MeasurementsGoals(models.Model):
     goal_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(Users, on_delete=models.DO_NOTHING, db_column="user_ID")
+    user = models.ForeignKey(
+        Users, on_delete=models.DO_NOTHING, db_column="user_ID"
+    )
     start_date = models.DateField()
     max_days = models.IntegerField()
     weight = models.IntegerField(blank=True, null=True)
@@ -67,10 +71,14 @@ class MeasurementsGoals(models.Model):
 
 class Reservations(models.Model):
     reservation_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(Users, on_delete=models.DO_NOTHING, db_column="user_ID")
+    user = models.ForeignKey(
+        Users, on_delete=models.DO_NOTHING, db_column="user_ID"
+    )
     type = models.CharField(max_length=50)
     status = models.CharField(max_length=1)
-    gym = models.ForeignKey(Gyms, on_delete=models.DO_NOTHING, db_column="gym_ID")
+    gym = models.ForeignKey(
+        Gyms, on_delete=models.DO_NOTHING, db_column="gym_ID"
+    )
     trainer_id = models.IntegerField(blank=True, null=True)
     date = models.DateTimeField()
 
@@ -79,7 +87,12 @@ class Reservations(models.Model):
 
 
 class Trainers(models.Model):
-    user = models.OneToOneField(Users, on_delete=models.DO_NOTHING, db_column="user_ID", primary_key=True)
+    user = models.OneToOneField(
+        Users,
+        on_delete=models.DO_NOTHING,
+        db_column="user_ID",
+        primary_key=True,
+    )
     hourly_cost = models.DecimalField(max_digits=16, decimal_places=16)
     specialization = models.CharField(max_length=40)
     description = models.CharField(max_length=400)
@@ -93,7 +106,9 @@ class TrainingGoals(models.Model):
     start_date = models.DateField()
     max_days = models.IntegerField()
     muscle_group = models.IntegerField()
-    user = models.ForeignKey(Users, on_delete=models.DO_NOTHING, db_column="user_ID")
+    user = models.ForeignKey(
+        Users, on_delete=models.DO_NOTHING, db_column="user_ID"
+    )
 
     class Meta:
         db_table = "Training_goals"
@@ -102,7 +117,9 @@ class TrainingGoals(models.Model):
 class Trainings(models.Model):
     training_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    user = models.ForeignKey(Users, on_delete=models.DO_NOTHING, db_column="user_ID")
+    user = models.ForeignKey(
+        Users, on_delete=models.DO_NOTHING, db_column="user_ID"
+    )
     trainer_id = models.IntegerField(blank=True, null=True)
     took_place = models.BooleanField()
 
@@ -111,8 +128,15 @@ class Trainings(models.Model):
 
 
 class TraningExercises(models.Model):
-    training = models.OneToOneField(Trainings, on_delete=models.DO_NOTHING, db_column="training_ID", primary_key=True)
-    exercise = models.ForeignKey(Exercises, on_delete=models.DO_NOTHING, db_column="exercise_ID")
+    training = models.OneToOneField(
+        Trainings,
+        on_delete=models.DO_NOTHING,
+        db_column="training_ID",
+        primary_key=True,
+    )
+    exercise = models.ForeignKey(
+        Exercises, on_delete=models.DO_NOTHING, db_column="exercise_ID"
+    )
     succeded = models.BooleanField()
 
     class Meta:
@@ -121,7 +145,9 @@ class TraningExercises(models.Model):
 
 class Diet(models.Model):
     date = models.DateField(primary_key=True)
-    user = models.ForeignKey(Users, on_delete=models.DO_NOTHING, db_column="user_ID")
+    user = models.ForeignKey(
+        Users, on_delete=models.DO_NOTHING, db_column="user_ID"
+    )
     meal = models.CharField(max_length=100)
     description = models.CharField(max_length=600)
     calories = models.IntegerField()

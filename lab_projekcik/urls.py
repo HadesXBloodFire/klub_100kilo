@@ -16,9 +16,22 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from klub_100kilo.views import *
 from django.contrib.auth import views as auth_views
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Klub 100kilo API",
+      default_version='v1',
+      description="API for Klub 100kilo",
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -40,4 +53,9 @@ urlpatterns = [
     path('post_diet_data/', post_diet_data, name='post_diet_data'),
     path('measurements/<int:year>/<int:month>/<int:day>/',  get_measurements, name='get_measurements'),
     path('post_measurements/<int:year>/<int:month>/<int:day>/', post_measurements, name='post_measurements'),
+    path('api/reservations/', get_reservations, name='get_reservations'),
+    path('api/add_reservation/', add_reservation, name='add_reservation'),
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

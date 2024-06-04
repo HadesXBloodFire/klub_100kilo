@@ -1,15 +1,29 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.validators import EmailValidator, MinLengthValidator, RegexValidator
+from django.core.validators import (
+    EmailValidator,
+    MinLengthValidator,
+    RegexValidator,
+)
 from .models import Reservations
 
 
 class RegisterForm(forms.ModelForm):
-    first_name = forms.CharField(max_length=30, validators=[MinLengthValidator(1)])
-    last_name = forms.CharField(max_length=30, validators=[MinLengthValidator(1)])
+    first_name = forms.CharField(
+        max_length=30, validators=[MinLengthValidator(1)]
+    )
+    last_name = forms.CharField(
+        max_length=30, validators=[MinLengthValidator(1)]
+    )
     phone_number = forms.CharField(
-        max_length=15, validators=[RegexValidator(r"^\d{9}$", message="Numer telefonu musi mieć dokładnie 9 cyfr.")]
+        max_length=15,
+        validators=[
+            RegexValidator(
+                r"^\d{9}$",
+                message="Numer telefonu musi mieć dokładnie 9 cyfr.",
+            )
+        ],
     )
     email = forms.EmailField(max_length=254, validators=[EmailValidator()])
     password = forms.CharField(
@@ -25,7 +39,13 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "phone_number", "email", "password"]
+        fields = [
+            "first_name",
+            "last_name",
+            "phone_number",
+            "email",
+            "password",
+        ]
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
@@ -47,7 +67,7 @@ class LoginForm(forms.Form):
 class EditProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email']
+        fields = ["first_name", "last_name", "email"]
 
 
 class ReservationPanel(forms.Form):

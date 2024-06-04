@@ -41,23 +41,33 @@ document.addEventListener('DOMContentLoaded', function () {
     calendar.unselect();
   });
 
-  function handleSelection(info) {
-      var start = info.startStr;
-      var end = info.endStr;
+function handleSelection(info) {
+    if (info !== null) {
+        var start = info.startStr;
+        var end = info.endStr;
 
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', '/book_training/', true);
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken')); // Function to get CSRF token
-      xhr.onload = function () {
-          if (this.status == 200) {
-              var response = JSON.parse(this.responseText);
-              alert(response.message);
-          }
-      };
-      xhr.send('start=' + start + '&end=' + end + '&user_id=' + userId);
-  }
-
+        fetch('/api/add_reservation/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')  // Pobierz token CSRF
+            },
+            body: JSON.stringify({
+                start: start,
+                end: end
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Obsłuż odpowiedź
+            if (data.message) {
+                alert(data.message);
+            }
+        });
+    } else {
+        console.log("No selection made on the calendar.");
+    }
+}
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
