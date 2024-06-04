@@ -34,10 +34,10 @@ urlpatterns = [
     path('account/password_change_done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_change_done.html'), name='password_change_done'),
     path('book_trainer/', book_trainer, name='book_trainer'),
     path('book_training/', book_training, name='book_training'),
-    path('diet/', diet_view, name='diet'),
     path('measurements/', measurements_view, name='measurements'),
-    path('get_diet_data/<int:year>/<int:month>/<int:day>/', get_diet_data, name='get_diet_data'),
-    path('post_diet_data/', post_diet_data, name='post_diet_data'),
     path('measurements/<int:year>/<int:month>/<int:day>/',  get_measurements, name='get_measurements'),
-    path('post_measurements/<int:year>/<int:month>/<int:day>/', post_measurements, name='post_measurements'),
+    path('post_measurements/<int:year>/<int:month>/<int:day>/', post_measurements, name='post_measurements'), \
+    path('diets/', diet_view, name='diet'),
+    path('diets/<int:year>/<int:month>/<int:day>/', get_diets, name='get_diets'),
+    path('post_diets/<int:year>/<int:month>/<int:day>/', post_diets, name='post_diets'),
 ]

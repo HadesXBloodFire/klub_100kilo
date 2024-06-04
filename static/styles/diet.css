@@ -1,4 +1,57 @@
 .content-center {
   margin: auto;
-  width: 20%;
+  width: 40%;
+}
+.field {
+  position: relative;
+}
+.edit-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+input:read-only {
+  background-color: #f3f3f3;
+  color: #888;
+}
+
+input:not(:read-only) {
+  background-color: #fff;
+  color: #000;
+}
+.control {
+  display: flex;
+  justify-content: space-between;
+}
+
+.input-label,
+.input-field {
+  width: 45%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 50px;
+}
+
+.input-field {
+  position: relative;
+}
+
+.edit-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
 }
