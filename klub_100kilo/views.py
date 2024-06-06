@@ -4,6 +4,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import ReservationSerializer
+from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -178,6 +179,7 @@ def post_measurements(request, year, month, day):
         measurement.waist_size = data.get("waist_size")
         measurement.thighs_size = data.get("thighs_size")
         measurement.save()
+        update_goals_status(user)
         return JsonResponse({"status": "success"})
     else:
         return JsonResponse(
@@ -290,21 +292,8 @@ def add_reservation(request):
 
     return Response({"message": "Reservation created successfully."})
 
-def check_goals(request):
-    user = get_user(request)
-    goals = MeasurementsGoals.objects.filter(user=user)
-    measurements = Measurements.objects.filter(user=user).order_by('-date').first()
-
-    for goal in goals:
-        if measurements.date - goal.start_date <= timedelta(days=goal.max_days):
-            if measurements.weight >= goal.weight and measurements.biceps_size >= goal.biceps_size and measurements.bust_size >= goal.bust_size and measurements.waist_size >= goal.waist_size and measurements.thighs_size >= goal.thighs_size and measurements.height >= goal.height:
-                goal.status = 'Z'
-            else:
-                goal.status = 'N'
-            goal.save()
-
 @csrf_exempt
-@login_required()
+@login_required
 def goals_view(request):
     user = get_user(request)
     goals = MeasurementsGoals.objects.filter(user=user)
@@ -321,9 +310,34 @@ def add_goal(request):
             goal = form.save(commit=False)
             goal.user = get_user(request)
             goal.save()
-            return JsonResponse({'status': 'success'})
+            return redirect('goals')
         else:
             return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
     else:
         form = GoalForm()
     return render(request, 'add_goal.html', {'form': form})
+
+
+def update_goals_status(user):
+    goals = MeasurementsGoals.objects.filter(user=user)
+    measurements = Measurements.objects.filter(user=user).order_by('-date').first()
+
+    if measurements is None:
+        return
+
+    for goal in goals:
+        if goal.status == 'Z':
+            continue
+
+        if goal.start_date <= measurements.date <= (goal.start_date + timedelta(days=goal.max_days)):
+            conditions = [
+                (goal.weight is None or measurements.weight <= goal.weight),
+                (goal.biceps_size is None or measurements.biceps_size >= goal.biceps_size),
+                (goal.bust_size is None or measurements.bust_size >= goal.bust_size),
+                (goal.waist_size is None or measurements.waist_size >= goal.waist_size),
+                (goal.thighs_size is None or measurements.thighs_size >= goal.thighs_size),
+                (goal.height is None or measurements.height >= goal.height)
+            ]
+            if all(conditions):
+                goal.status = 'Z'
+                goal.save()
