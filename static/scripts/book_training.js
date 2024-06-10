@@ -1,87 +1,123 @@
-document.addEventListener('DOMContentLoaded', function () {
-  var calendarEl = document.getElementById('calendar');
-  var interactButton = document.getElementById('interactButton');
-  var selectedInfo = null;
-  var today = new Date();
+$(document).ready(function () {
+       var calendar = $('#calendar').fullCalendar({
+           header: {
+               left: 'prev,next today',
+               center: 'title',
+               right: 'month,agendaWeek,agendaDay'
+           },
+           events: '/all_events',
+           selectable: true,
+           selectHelper: true,
+           editable: true,
+           eventLimit: true,
+           select: function (start, end, allDay) {
+               var title = prompt("Enter Event Title");
+               var startDate = new Date(start);
+               var endDate = new Date(end);
+               var currentDate = new Date();
 
-  var calendar = new FullCalendar.Calendar(calendarEl, {
-    locale: 'pl',
-    initialView: 'timeGridWeek',
-    slotDuration: '02:00:00',
-    minTime: '00:00:00',
-    maxTime: '24:00:00',
-    selectable: true,
-    allDaySlot: false,
-    validRange: {
-      start: today.toISOString().substring(0, 10),
-    },
-    datesAboveResources: true,
-    headerToolbar: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'timeGridWeek,timeGridDay',
-    },
-    slotLabelFormat: {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    },
-    select: function (info) {
-      selectedInfo = info;
-      interactButton.style.display = 'block';
-    },
-    unselect: function () {
-      selectedInfo = null;
-      interactButton.style.display = 'none';
-    },
-  });
+               if (startDate < currentDate || endDate < currentDate) {
+                   alert("Start and end times cannot be in the past");
+                   return;
+               }
 
-  interactButton.addEventListener('click', function () {
-    handleSelection(selectedInfo);
-    calendar.unselect();
-  });
+               $.ajax({
+                type: "GET",
+                url: '/check_overlap',
+                data: {'start': startDate, 'end': endDate},
+                dataType: "json",
+                success: function (data) {
+                    if (data.overlap) {
+                        alert("You have another reservation at the same time");
+                        return;
+                    }
+                },
+                error: function (data) {
+                    alert('There is a problem!!!');
+                }
+               });
+                if (startDate < currentDate || endDate < currentDate) {
+                    alert("Cannot book for past dates");
+                    return;
+                }
 
-function handleSelection(info) {
-    if (info !== null) {
-        var start = info.startStr;
-        var end = info.endStr;
+               if (title) {
+                   var start = $.fullCalendar.formatDate(start, "Y-MM-DD HH:mm:ss");
+                   var end = $.fullCalendar.formatDate(end, "Y-MM-DD HH:mm:ss");
 
-        fetch('/api/add_reservation/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')  // Pobierz token CSRF
-            },
-            body: JSON.stringify({
-                start: start,
-                end: end
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Obsłuż odpowiedź
-            if (data.message) {
-                alert(data.message);
-            }
-        });
-    } else {
-        console.log("No selection made on the calendar.");
-    }
-}
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
+                   $.ajax({
+                       type: "GET",
+                       url: '/add_event',
+                       data: {'title': title, 'start': start, 'end': end},
+                       dataType: "json",
+                       success: function (data) {
+                           calendar.fullCalendar('refetchEvents');
+                           alert("Added Successfully");
+                       },
+                       error: function (data) {
+                           alert('There is a problem!!!');
+                       }
+                   });
+               }
+           },
+           eventResize: function (event) {
+               var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
+               var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
+               var title = event.title;
+               var id = event.id;
+               $.ajax({
+                   type: "GET",
+                   url: '/update',
+                   data: {'title': title, 'start': start, 'end': end, 'id': id},
+                   dataType: "json",
+                   success: function (data) {
+                       calendar.fullCalendar('refetchEvents');
+                       alert('Event Update');
+                   },
+                   error: function (data) {
+                       alert('There is a problem!!!');
+                   }
+               });
+           },
 
-  calendar.render();
-});
+           eventDrop: function (event) {
+               var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
+               var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
+               var title = event.title;
+               var id = event.id;
+               $.ajax({
+                   type: "GET",
+                   url: '/update',
+                   data: {'title': title, 'start': start, 'end': end, 'id': id},
+                   dataType: "json",
+                   success: function (data) {
+                       calendar.fullCalendar('refetchEvents');
+                       alert('Event Update');
+                   },
+                   error: function (data) {
+                       alert('There is a problem!!!');
+                   }
+               });
+           },
+
+           eventClick: function (event) {
+               if (confirm("Are you sure you want to remove it?")) {
+                   var id = event.id;
+                   $.ajax({
+                       type: "GET",
+                       url: '/remove',
+                       data: {'id': id},
+                       dataType: "json",
+                       success: function (data) {
+                           calendar.fullCalendar('refetchEvents');
+                           alert('Event Removed');
+                       },
+                       error: function (data) {
+                           alert('There is a problem!!!');
+                       }
+                   });
+               }
+           },
+
+       });
+   });

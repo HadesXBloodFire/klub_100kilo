@@ -1,15 +1,16 @@
 import os
+import datetime
+
 
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import ReservationSerializer
-from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 from klub_100kilo.models import *
+
 from django.contrib.auth import (
     authenticate,
     login,
@@ -25,7 +26,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 from django.views.decorators.http import require_GET
-from .serializers import ReservationSerializer
 
 
 def get_user(request):
@@ -45,7 +45,10 @@ def main_page(request):
         user_id=get_user(request).user_id, start__gt=timezone.now()
     )
     for reservation in user_reservations:
-        reservation.trainer = Users.objects.get(user_id=reservation.trainer_id)
+        try:
+            reservation.trainer = Users.objects.get(user_id=reservation.trainer_id)
+        except Users.DoesNotExist:
+            reservation.trainer = None
     return render(request, "main.html", {"reservations": user_reservations})
 
 
@@ -121,18 +124,26 @@ def edit_profile(request):
 
 def book_trainer(request):
     if request.method == "POST":
-        # Tutaj dodajemy logikę przypisywania trenera do rezerwacji
-        pass
+        selected_trainer_id = int(request.POST.get('trainer'))
+        selected_reservation_id = request.POST.get('reservation')
+
+        print(selected_trainer_id)
+        print(selected_reservation_id)
+        print(type(selected_trainer_id))
+        print(type(selected_reservation_id))
+
+
+        reservation = Reservations.objects.get(reservation_id=selected_reservation_id)
+
+        reservation.trainer_id = selected_trainer_id
+        reservation.save()
+
+        return redirect('book_trainer')
+
     else:
         reservations = Reservations.objects.filter(user=get_user(request))
-        trainers = Trainers.objects.select_related(
-            "user"
-        ).all()  # Pobieramy wszystkich trenerów i ich powiązane dane użytkownika
-        return render(
-            request,
-            "book_trainer.html",
-            {"reservations": reservations, "trainers": trainers},
-        )
+        trainers = Trainers.objects.select_related("user").all()
+        return render(request, "book_trainer.html", {"reservations": reservations, "trainers": trainers})
 
 
 def logout_view(request):
@@ -247,23 +258,6 @@ def diet_view(request):
     today_diet = diets.filter(date=today).first()
     return render(request, 'diet.html', {'diets': diets, 'today_diet': today_diet})
 
-@login_required
-@csrf_exempt
-def book_training(request):
-    if request.method == "POST":
-        start_time = request.POST.get("start")
-        end_time = request.POST.get("end")
-        user_id = request.user.id
-
-        reservation = Reservation(
-            start_time=start_time, end_time=end_time, user_id=user_id
-        )
-        reservation.save()
-
-        return JsonResponse({"message": "Reservation created successfully."})
-    else:
-        return render(request, "book_training.html")
-
 
 @api_view(["GET"])
 def get_reservations(request):
@@ -272,25 +266,61 @@ def get_reservations(request):
     return Response(serializer.data)
 
 
-@api_view(["POST"])
-def add_reservation(request):
-    start_time = request.data.get("start")
-    end_time = request.data.get("end")
+@login_required
+@csrf_exempt
+def book_training(request):
+    all_events = Events.objects.all()
+    context = {
+        "events": all_events,
+    }
+    return render(request, 'book_training.html', context)
 
-    logged_in_user = get_user_model().objects.get(email=request.user.email)
-    user = Users.objects.get(mail=logged_in_user.email)
 
-    reservation = Reservations(
-        user=user,
-        type="Training",
-        status="P",
-        date=timezone.now(),
-        start_time=start_time,
-        end_time=end_time,
-    )
+def all_events(request):
+    all_events = Reservations.objects.filter(user_id=get_user(request).user_id)
+    out = []
+    for event in all_events:
+        out.append({
+            'title': event.name,
+            'id': event.reservation_id,
+            'start': event.start.strftime("%m/%d/%Y, %H:%M:%S"),
+            'end': event.end.strftime("%m/%d/%Y, %H:%M:%S"),
+        })
 
-    reservation.save()
+    return JsonResponse(out, safe=False)
 
+
+def add_event(request):
+    start = request.GET.get("start", None)
+    end = request.GET.get("end", None)
+    title = request.GET.get("title", None)
+    user_id = get_user(request).user_id
+    event = Reservations(name=str(title), start=start, end=end, user_id=user_id, gym_id=1, status='P', type='Training')
+    event.save()
+    data = {}
+    return JsonResponse(data)
+
+
+def update(request):
+    start = request.GET.get("start", None)
+    end = request.GET.get("end", None)
+    title = request.GET.get("title", None)
+    id = request.GET.get("id", None)
+    event = Reservations.objects.get(reservation_id=id)
+    event.start = start
+    event.end = end
+    event.name = title
+    event.save()
+    data = {}
+    return JsonResponse(data)
+
+
+def remove(request):
+    id = request.GET.get("id", None)
+    event = Reservations.objects.get(reservation_id=id)
+    event.delete()
+    data = {}
+    return JsonResponse(data)
     return Response({"message": "Reservation created successfully."})
 
 @csrf_exempt

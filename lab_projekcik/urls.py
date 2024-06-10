@@ -22,6 +22,7 @@ from django.contrib.auth import views as auth_views
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.views.generic import TemplateView
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -46,7 +47,6 @@ urlpatterns = [
     path('account/edit_profile/', edit_profile, name='edit_profile'),
     path('account/password_change_done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_change_done.html'), name='password_change_done'),
     path('book_trainer/', book_trainer, name='book_trainer'),
-    path('book_training/', book_training, name='book_training'),
     path('measurements/', measurements_view, name='measurements'),
     path('measurements/<int:year>/<int:month>/<int:day>/',  get_measurements, name='get_measurements'),
     path('post_measurements/<int:year>/<int:month>/<int:day>/', post_measurements, name='post_measurements'),
@@ -54,13 +54,17 @@ urlpatterns = [
     path('diets/<int:year>/<int:month>/<int:day>/', get_diets, name='get_diets'),
     path('post_diets/<int:year>/<int:month>/<int:day>/', post_diets, name='post_diets'),
     path('api/reservations/', get_reservations, name='get_reservations'),
-    path('api/add_reservation/', add_reservation, name='add_reservation'),
+    path('book_training/', book_training, name='book_training'),
+    path('all_events/', all_events, name='all_events'),
+    path('add_event/', add_event, name='add_event'),
+    path('update/', update, name='update'),
+    path('remove/', remove, name='remove'),
     path('goals/', goals_view, name='goals'),
     path('add_goal/', add_goal, name='add_goal'),
     path('workouts/', workouts_view, name='workouts'),
     path('workouts/create_training/', create_training, name='create_training'),
     path('workouts/mark_exercises_as_succeeded/<int:training_id>/', mark_exercises_as_succeeded, name='mark_exercises_as_succeeded'),
-    path("", include("chat.urls")),
+    path("chat/", include("chat.urls")),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
