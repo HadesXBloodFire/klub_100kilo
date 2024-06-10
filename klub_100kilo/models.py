@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 class Users(models.Model):
     user_id = models.AutoField(primary_key=True)
@@ -64,23 +64,43 @@ class MeasurementsGoals(models.Model):
     waist_size = models.IntegerField(blank=True, null=True)
     thighs_size = models.IntegerField(blank=True, null=True)
     height = models.IntegerField(blank=True, null=True)
+    status = models.CharField(max_length=1, default='N')  # Add this line
 
     class Meta:
-        db_table = "Measurements_goals"
+        db_table = "Measurements_Goals"
 
 
 class Reservations(models.Model):
     reservation_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
-        Users, on_delete=models.DO_NOTHING, db_column="user_ID"
+        Users, on_delete=models.CASCADE, db_column="user_ID"
     )
     type = models.CharField(max_length=50)
     status = models.CharField(max_length=1)
     gym = models.ForeignKey(
-        Gyms, on_delete=models.DO_NOTHING, db_column="gym_ID"
+        Gyms, on_delete=models.CASCADE, db_column="gym_ID"
     )
     trainer_id = models.IntegerField(blank=True, null=True)
-    date = models.DateTimeField()
+    name = models.CharField(max_length=255, null=True, blank=True)
+    start = models.DateTimeField(null=True, blank=True)
+    end = models.DateTimeField(null=True, blank=True)
+
+    def clean(self):
+        super().clean()
+        if self.start < timezone.now() or self.end < timezone.now():
+            raise ValidationError("Start and end times cannot be in the past")
+
+        overlapping_reservations = Reservations.objects.filter(
+            user=self.user,
+            start__lt=self.end,
+            end__gt=self.start
+        )
+
+        if self.pk:
+            overlapping_reservations = overlapping_reservations.exclude(pk=self.pk)
+
+        if overlapping_reservations.exists():
+            raise ValidationError("You have another reservation at the same time")
 
     class Meta:
         db_table = "Reservations"
@@ -111,7 +131,7 @@ class TrainingGoals(models.Model):
     )
 
     class Meta:
-        db_table = "Training_goals"
+        db_table = "Training_Goals"
 
 
 class Trainings(models.Model):
@@ -120,28 +140,28 @@ class Trainings(models.Model):
     user = models.ForeignKey(
         Users, on_delete=models.DO_NOTHING, db_column="user_ID"
     )
-    trainer_id = models.IntegerField(blank=True, null=True)
-    took_place = models.BooleanField()
+    took_place = models.BooleanField(default=False)
+    exercises = models.ManyToManyField(Exercises, through='TraningsExercises')
 
     class Meta:
         db_table = "Trainings"
 
 
-class TraningExercises(models.Model):
-    training = models.OneToOneField(
+class TraningsExercises(models.Model):
+    training_exercise_id = models.AutoField(primary_key=True)
+    training = models.ForeignKey(
         Trainings,
         on_delete=models.DO_NOTHING,
         db_column="training_ID",
-        primary_key=True,
     )
     exercise = models.ForeignKey(
         Exercises, on_delete=models.DO_NOTHING, db_column="exercise_ID"
     )
-    succeded = models.BooleanField()
+    succeded = models.BooleanField(default=False)
 
     class Meta:
-        db_table = "Traning_exercises"
-
+        db_table = "Tranings_Exercises"
+        unique_together = (("training", "exercise"),)
 
 class Diet(models.Model):
     date = models.DateField(primary_key=True)
@@ -152,3 +172,14 @@ class Diet(models.Model):
 
     class Meta:
         db_table = "Diet"
+
+
+
+class Events(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    start = models.DateTimeField(null=True, blank=True)
+    end = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "Events"
