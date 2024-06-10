@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div id="create-training-popup" class="popup">
+    <form method="POST" action="{% url 'create_training' %}">
+        {% csrf_token %}
+        <input type="text" id="training-name" name="name" placeholder="Training name" required>
+        {% for exercise in exercises %}
+            <input type="checkbox" id="exercise-{{ exercise.exercise_id }}" name="exercises" value="{{ exercise.exercise_id }}">
+            <label for="exercise-{{ exercise.exercise_id }}">{{ exercise.description }}</label><br>
+        {% endfor %}
+        <input type="submit" value="Create Training">
+    </form>
+</div>
+
+<div id="trainings-list">
+    {% for training in trainings %}
+        <div onclick="document.getElementById('view-training-popup-{{ training.training_id }}').style.display='block'">
+            {{ training.name }}
+        </div>
+
+        <div id="view-training-popup-{{ training.training_id }}" class="popup">
+            <form method="POST" action="{% url 'mark_exercises_as_succeeded' training.training_id %}">
+                {% csrf_token %}
+                {% for training_exercise in training.traningsexercises_set.all %}
+                    <input type="checkbox" id="exercise-{{ training.training_id }}-{{ training_exercise.exercise.exercise_id }}" name="exercises" value="{{ training_exercise.exercise.exercise_id }}" {% if training_exercise.succeded %}checked{% endif %}>
+                    <label for="exercise-{{ training.training_id }}-{{ training_exercise.exercise.exercise_id }}">{{ training_exercise.exercise.description }}</label><br>
+                {% endfor %}
+                <input type="submit" value="Update">
+            </form>
+        </div>
+    {% endfor %}
+</div>
+<script>
+    window.onload = function() {
+        var nameInput = document.getElementById('training-name');
+        var checkboxes = document.getElementsByName('exercises');
+        var submitButton = document.querySelector('input[type="submit"]');
+
+        function checkInputs() {
+            var nameGiven = nameInput.value !== '';
+            var exerciseChosen = Array.prototype.slice.call(checkboxes).some(x => x.checked);
+            submitButton.disabled = !(nameGiven && exerciseChosen);
+        }
+
+        nameInput.addEventListener('input', checkInputs);
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', checkInputs);
+        });
+
+        checkInputs();
+    };
+</script>
+{% endblock %}
