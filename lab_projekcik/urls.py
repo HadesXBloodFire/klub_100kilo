@@ -16,7 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from klub_100kilo.views import *
 from django.contrib.auth import views as auth_views
 from rest_framework import permissions
@@ -60,6 +60,7 @@ urlpatterns = [
     path('workouts/', workouts_view, name='workouts'),
     path('workouts/create_training/', create_training, name='create_training'),
     path('workouts/mark_exercises_as_succeeded/<int:training_id>/', mark_exercises_as_succeeded, name='mark_exercises_as_succeeded'),
+    path("", include("chat.urls")),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

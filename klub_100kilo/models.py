@@ -81,7 +81,9 @@ class Reservations(models.Model):
         Gyms, on_delete=models.DO_NOTHING, db_column="gym_ID"
     )
     trainer_id = models.IntegerField(blank=True, null=True)
-    date = models.DateTimeField()
+    name = models.CharField(max_length=255, null=True, blank=True)
+    start = models.DateTimeField(null=True, blank=True)
+    end = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = "Reservations"

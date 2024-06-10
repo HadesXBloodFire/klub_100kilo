@@ -42,7 +42,7 @@ def hero_page(request):
 @login_required
 def main_page(request):
     user_reservations = Reservations.objects.filter(
-        user_id=get_user(request).user_id, date__gt=timezone.now()
+        user_id=get_user(request).user_id, start__gt=timezone.now()
     )
     for reservation in user_reservations:
         reservation.trainer = Users.objects.get(user_id=reservation.trainer_id)
