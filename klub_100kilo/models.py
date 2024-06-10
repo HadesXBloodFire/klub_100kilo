@@ -121,28 +121,28 @@ class Trainings(models.Model):
     user = models.ForeignKey(
         Users, on_delete=models.DO_NOTHING, db_column="user_ID"
     )
-    trainer_id = models.IntegerField(blank=True, null=True)
-    took_place = models.BooleanField()
+    took_place = models.BooleanField(default=False)
+    exercises = models.ManyToManyField(Exercises, through='TraningsExercises')
 
     class Meta:
         db_table = "Trainings"
 
 
-class TraningExercises(models.Model):
-    training = models.OneToOneField(
+class TraningsExercises(models.Model):
+    training_exercise_id = models.AutoField(primary_key=True)
+    training = models.ForeignKey(
         Trainings,
         on_delete=models.DO_NOTHING,
         db_column="training_ID",
-        primary_key=True,
     )
     exercise = models.ForeignKey(
         Exercises, on_delete=models.DO_NOTHING, db_column="exercise_ID"
     )
-    succeded = models.BooleanField()
+    succeded = models.BooleanField(default=False)
 
     class Meta:
-        db_table = "Traning_Exercises"
-
+        db_table = "Tranings_Exercises"
+        unique_together = (("training", "exercise"),)
 
 class Diet(models.Model):
     date = models.DateField(primary_key=True)

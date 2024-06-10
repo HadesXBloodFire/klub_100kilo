@@ -7,8 +7,9 @@ from .serializers import ReservationSerializer
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.views.decorators.http import require_POST
 from django.utils import timezone
-from klub_100kilo.models import Reservations, Users, Trainers, Measurements, MeasurementsGoals
+from klub_100kilo.models import *
 from django.contrib.auth import (
     authenticate,
     login,
@@ -341,3 +342,41 @@ def update_goals_status(user):
             if all(conditions):
                 goal.status = 'Z'
                 goal.save()
+
+@login_required
+def workouts_view(request):
+    trainings = Trainings.objects.filter(user=get_user(request))
+    exercises = Exercises.objects.all()
+    return render(request, 'workouts.html', {'trainings': trainings, 'exercises': exercises})
+
+@require_POST
+@login_required
+def create_training(request):
+    print(request.POST)
+    name = request.POST.get('name')
+    exercise_ids = request.POST.getlist('exercises')
+    exercise_ids = list(filter(None, exercise_ids))
+    if not exercise_ids:
+        messages.error(request, "No exercises selected.")
+        return redirect('workouts')
+    exercises = Exercises.objects.filter(exercise_id__in=exercise_ids)
+    if len(exercises) != len(exercise_ids):
+        messages.error(request, "Some exercises could not be found.")
+        return redirect('workouts')
+    training = Trainings(name=name, user=get_user(request))
+    training.save()
+    for exercise in exercises:
+        training_exercise = TraningsExercises(training=training, exercise=exercise)
+        training_exercise.save()
+    return redirect('workouts')
+
+@require_POST
+@login_required
+def mark_exercises_as_succeeded(request, training_id):
+    checked_exercise_ids = request.POST.getlist('exercises')
+    checked_exercise_ids = list(filter(None, checked_exercise_ids))
+    all_exercise_ids = [str(te.exercise.exercise_id) for te in TraningsExercises.objects.filter(training_id=training_id)]
+    unchecked_exercise_ids = list(set(all_exercise_ids) - set(checked_exercise_ids))
+    TraningsExercises.objects.filter(training_id=training_id, exercise_id__in=unchecked_exercise_ids).update(succeded=False)
+    TraningsExercises.objects.filter(training_id=training_id, exercise_id__in=checked_exercise_ids).update(succeded=True)
+    return redirect('workouts')
