@@ -7,7 +7,10 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("klub_100kilo", "0002_remove_reservations_date_reservations_end_and_more"),
+        (
+            "klub_100kilo",
+            "0002_remove_reservations_date_reservations_end_and_more",
+        ),
     ]
 
     operations = [
@@ -15,14 +18,18 @@ class Migration(migrations.Migration):
             model_name="reservations",
             name="gym",
             field=models.ForeignKey(
-                db_column="gym_ID", on_delete=django.db.models.deletion.CASCADE, to="klub_100kilo.gyms"
+                db_column="gym_ID",
+                on_delete=django.db.models.deletion.CASCADE,
+                to="klub_100kilo.gyms",
             ),
         ),
         migrations.AlterField(
             model_name="reservations",
             name="user",
             field=models.ForeignKey(
-                db_column="user_ID", on_delete=django.db.models.deletion.CASCADE, to="klub_100kilo.users"
+                db_column="user_ID",
+                on_delete=django.db.models.deletion.CASCADE,
+                to="klub_100kilo.users",
             ),
         ),
     ]
