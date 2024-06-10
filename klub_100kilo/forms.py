@@ -6,7 +6,7 @@ from django.core.validators import (
     MinLengthValidator,
     RegexValidator,
 )
-from .models import Reservations
+from .models import Reservations, MeasurementsGoals
 
 
 class RegisterForm(forms.ModelForm):
@@ -72,3 +72,8 @@ class EditProfileForm(forms.ModelForm):
 
 class ReservationPanel(forms.Form):
     pass
+
+class GoalForm(forms.ModelForm):
+    class Meta:
+        model = MeasurementsGoals
+        fields = ['start_date', 'max_days', 'weight', 'biceps_size', 'bust_size', 'waist_size', 'thighs_size', 'height']

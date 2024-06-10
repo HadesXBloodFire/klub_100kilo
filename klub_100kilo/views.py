@@ -7,8 +7,10 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.views.decorators.http import require_POST
 from django.utils import timezone
-from klub_100kilo.models import Reservations, Users, Trainers, Measurements, Diet, Events
+from klub_100kilo.models import *
+
 from django.contrib.auth import (
     authenticate,
     login,
@@ -16,7 +18,7 @@ from django.contrib.auth import (
     login as auth_login,
 )
 
-from .forms import RegisterForm, LoginForm, EditProfileForm
+from .forms import RegisterForm, LoginForm, EditProfileForm, GoalForm
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import logout
 from django.contrib import messages
@@ -189,6 +191,7 @@ def post_measurements(request, year, month, day):
         measurement.waist_size = data.get("waist_size")
         measurement.thighs_size = data.get("thighs_size")
         measurement.save()
+        update_goals_status(user)
         return JsonResponse({"status": "success"})
     else:
         return JsonResponse(
@@ -318,3 +321,92 @@ def remove(request):
     event.delete()
     data = {}
     return JsonResponse(data)
+    return Response({"message": "Reservation created successfully."})
+
+@csrf_exempt
+@login_required
+def goals_view(request):
+    user = get_user(request)
+    goals = MeasurementsGoals.objects.filter(user=user)
+    achieved_goals = goals.filter(status='Z').count()
+    total_goals = goals.count()
+    percentage = (achieved_goals / total_goals) * 100 if total_goals > 0 else 0
+    return render(request, 'goals.html', {'goals': goals, 'percentage': percentage})
+
+@login_required
+def add_goal(request):
+    if request.method == 'POST':
+        form = GoalForm(request.POST)
+        if form.is_valid():
+            goal = form.save(commit=False)
+            goal.user = get_user(request)
+            goal.save()
+            return redirect('goals')
+        else:
+            return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+    else:
+        form = GoalForm()
+    return render(request, 'add_goal.html', {'form': form})
+
+
+def update_goals_status(user):
+    goals = MeasurementsGoals.objects.filter(user=user)
+    measurements = Measurements.objects.filter(user=user).order_by('-date').first()
+
+    if measurements is None:
+        return
+
+    for goal in goals:
+        if goal.status == 'Z':
+            continue
+
+        if goal.start_date <= measurements.date <= (goal.start_date + timedelta(days=goal.max_days)):
+            conditions = [
+                (goal.weight is None or measurements.weight <= goal.weight),
+                (goal.biceps_size is None or measurements.biceps_size >= goal.biceps_size),
+                (goal.bust_size is None or measurements.bust_size >= goal.bust_size),
+                (goal.waist_size is None or measurements.waist_size >= goal.waist_size),
+                (goal.thighs_size is None or measurements.thighs_size >= goal.thighs_size),
+                (goal.height is None or measurements.height >= goal.height)
+            ]
+            if all(conditions):
+                goal.status = 'Z'
+                goal.save()
+
+@login_required
+def workouts_view(request):
+    trainings = Trainings.objects.filter(user=get_user(request))
+    exercises = Exercises.objects.all()
+    return render(request, 'workouts.html', {'trainings': trainings, 'exercises': exercises})
+
+@require_POST
+@login_required
+def create_training(request):
+    print(request.POST)
+    name = request.POST.get('name')
+    exercise_ids = request.POST.getlist('exercises')
+    exercise_ids = list(filter(None, exercise_ids))
+    if not exercise_ids:
+        messages.error(request, "No exercises selected.")
+        return redirect('workouts')
+    exercises = Exercises.objects.filter(exercise_id__in=exercise_ids)
+    if len(exercises) != len(exercise_ids):
+        messages.error(request, "Some exercises could not be found.")
+        return redirect('workouts')
+    training = Trainings(name=name, user=get_user(request))
+    training.save()
+    for exercise in exercises:
+        training_exercise = TraningsExercises(training=training, exercise=exercise)
+        training_exercise.save()
+    return redirect('workouts')
+
+@require_POST
+@login_required
+def mark_exercises_as_succeeded(request, training_id):
+    checked_exercise_ids = request.POST.getlist('exercises')
+    checked_exercise_ids = list(filter(None, checked_exercise_ids))
+    all_exercise_ids = [str(te.exercise.exercise_id) for te in TraningsExercises.objects.filter(training_id=training_id)]
+    unchecked_exercise_ids = list(set(all_exercise_ids) - set(checked_exercise_ids))
+    TraningsExercises.objects.filter(training_id=training_id, exercise_id__in=unchecked_exercise_ids).update(succeded=False)
+    TraningsExercises.objects.filter(training_id=training_id, exercise_id__in=checked_exercise_ids).update(succeded=True)
+    return redirect('workouts')

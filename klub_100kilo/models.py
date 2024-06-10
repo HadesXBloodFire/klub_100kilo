@@ -84,7 +84,7 @@ class Reservations(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
     start = models.DateTimeField(null=True, blank=True)
     end = models.DateTimeField(null=True, blank=True)
-
+    
     def clean(self):
         super().clean()
         if self.start < timezone.now() or self.end < timezone.now():
@@ -101,6 +101,7 @@ class Reservations(models.Model):
 
         if overlapping_reservations.exists():
             raise ValidationError("You have another reservation at the same time")
+
 
     class Meta:
         db_table = "Reservations"

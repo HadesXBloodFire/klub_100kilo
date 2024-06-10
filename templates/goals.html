@@ -1,0 +1,146 @@
+{% extends 'base.html' %} {% block content %}
+<!-- Button to Toggle the Form -->
+<button id="toggleGoalForm" class="btn btn-primary">
+  Dodaj cel
+</button>
+
+<!-- The Form -->
+<div id="goalFormContainer" style="display: none;">
+  <form id="goal-form" method="POST" action="{% url 'add_goal' %}">
+    {% csrf_token %}
+    <div class="content-center">
+      <section class="section">
+        <div class="container">
+          <h1 class="title">Dodaj cel</h1>
+            <div class="field">
+              <div class="control">
+                <div class="input-label">
+                  <label class="label">Data rozpoczęcia</label>
+                </div>
+                <div class="input-field">
+                  <input class="input" type="date" id="start_date" name="start_date" required />
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <div class="input-label">
+                  <label class="label">Maksymalna liczba dni</label>
+                </div>
+                <div class="input-field">
+                  <input class="input" type="number" id="max_days" name="max_days" required />
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <div class="input-label">
+                  <label class="label">Waga</label>
+                </div>
+                <div class="input-field">
+                  <input class="input" type="number" id="weight" name="weight" />
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <div class="input-label">
+                  <label class="label">Obwód bicepsa</label>
+                </div>
+                <div class="input-field">
+                  <input class="input" type="number" id="biceps_size" name="biceps_size" />
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <div class="input-label">
+                  <label class="label">Obwód klatki piersiowej</label>
+                </div>
+                <div class="input-field">
+                  <input class="input" type="number" id="bust_size" name="bust_size" />
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <div class="input-label">
+                  <label class="label">Obwód talii</label>
+                </div>
+                <div class="input-field">
+                  <input class="input" type="number" id="waist_size" name="waist_size" />
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <div class="input-label">
+                  <label class="label">Obwód ud</label>
+                </div>
+                <div class="input-field">
+                  <input class="input" type="number" id="thighs_size" name="thighs_size" />
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <div class="input-label">
+                  <label class="label">Wzrost</label>
+                </div>
+                <div class="input-field">
+                  <input class="input" type="number" id="height" name="height" />
+                </div>
+              </div>
+            </div>
+                      <div class="field">
+                        <div class="control">
+                          <button id="submit-button" class="button is-link" type="submit">Zapisz cel</button>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </form>
+            </div>
+
+<!-- The JavaScript to Toggle the Form -->
+<script>
+document.getElementById('toggleGoalForm').addEventListener('click', function() {
+  var formContainer = document.getElementById('goalFormContainer');
+  if (formContainer.style.display === 'none') {
+    formContainer.style.display = 'block';
+  } else {
+    formContainer.style.display = 'none';
+  }
+});
+</script>
+
+<table>
+    <tr>
+        <th>Data rozpoczęcia</th>
+        <th>Maksymalna liczba dni</th>
+        <th>Waga</th>
+        <th>Rozmiar bicepsa</th>
+        <th>Rozmiar biustu</th>
+        <th>Rozmiar talii</th>
+        <th>Rozmiar ud</th>
+        <th>Wzrost</th>
+        <th>Status</th>
+    </tr>
+    {% for goal in goals %}
+    <tr>
+        <td>{{ goal.start_date }}</td>
+        <td>{{ goal.max_days }}</td>
+        <td>{{ goal.weight }}</td>
+        <td>{{ goal.biceps_size }}</td>
+        <td>{{ goal.bust_size }}</td>
+        <td>{{ goal.waist_size }}</td>
+        <td>{{ goal.thighs_size }}</td>
+        <td>{{ goal.height }}</td>
+        <td>{{ goal.status }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<p>Procent wykonanych celów: {{ percentage }}%</p>
+{% endblock %}

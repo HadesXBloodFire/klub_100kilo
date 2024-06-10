@@ -16,7 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from klub_100kilo.views import *
 from django.contrib.auth import views as auth_views
 from rest_framework import permissions
@@ -54,12 +54,17 @@ urlpatterns = [
     path('diets/<int:year>/<int:month>/<int:day>/', get_diets, name='get_diets'),
     path('post_diets/<int:year>/<int:month>/<int:day>/', post_diets, name='post_diets'),
     path('api/reservations/', get_reservations, name='get_reservations'),
-    # path('api/add_reservation/', add_reservation, name='add_reservation'),
     path('book_training/', book_training, name='book_training'),
     path('all_events/', all_events, name='all_events'),
     path('add_event/', add_event, name='add_event'),
     path('update/', update, name='update'),
     path('remove/', remove, name='remove'),
+    path('goals/', goals_view, name='goals'),
+    path('add_goal/', add_goal, name='add_goal'),
+    path('workouts/', workouts_view, name='workouts'),
+    path('workouts/create_training/', create_training, name='create_training'),
+    path('workouts/mark_exercises_as_succeeded/<int:training_id>/', mark_exercises_as_succeeded, name='mark_exercises_as_succeeded'),
+    path("chat/", include("chat.urls")),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
