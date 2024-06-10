@@ -1,22 +1,31 @@
 {% extends 'base.html' %}
 {% block content %}
-
+<link rel="stylesheet" href="../static/styles/workouts.css" />
 <div id="create-training-popup" class="popup">
     <form method="POST" action="{% url 'create_training' %}">
         {% csrf_token %}
         <input type="text" id="training-name" name="name" placeholder="Training name" required>
-        {% for exercise in exercises %}
-            <input type="checkbox" id="exercise-{{ exercise.exercise_id }}" name="exercises" value="{{ exercise.exercise_id }}">
-            <label for="exercise-{{ exercise.exercise_id }}">{{ exercise.description }}</label><br>
-        {% endfor %}
-        <input type="submit" value="Create Training">
+        <button id="toggleCreateTrainingForm" class="btn btn-primary">
+          Utwórz trening
+        </button>
+        <div id="exercises-list">
+            {% for exercise in exercises %}
+                <label>
+                    <input type="checkbox" id="exercise-{{ exercise.exercise_id }}" name="exercises" value="{{ exercise.exercise_id }}">
+                    {{ exercise.description }}
+                </label>
+            {% endfor %}
+        </div>
     </form>
 </div>
 
 <div id="trainings-list">
     {% for training in trainings %}
-        <div onclick="document.getElementById('view-training-popup-{{ training.training_id }}').style.display='block'">
-            {{ training.name }}
+        <div>
+            <div class="training-name" onclick="document.getElementById('view-training-popup-{{ training.training_id }}').style.display='block'">
+                {{ training.name }}
+            </div>
+
         </div>
 
         <div id="view-training-popup-{{ training.training_id }}" class="popup">
