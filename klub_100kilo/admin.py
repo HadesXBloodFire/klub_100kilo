@@ -38,15 +38,7 @@ class MeasurementsAdmin(admin.ModelAdmin):
 # Custom admin display for Reservations
 @admin.register(Reservations)
 class ReservationsAdmin(admin.ModelAdmin):
-    list_display = (
-        "reservation_id",
-        "user",
-        "type",
-        "status",
-        "gym",
-        "trainer_id",
-        "date",
-    )
+    list_display = ('reservation_id', 'user', 'type', 'status', 'gym', 'trainer_id', 'name', 'start', 'end')
     list_filter = ("type", "status")
 
 
