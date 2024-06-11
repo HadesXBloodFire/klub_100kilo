@@ -21,7 +21,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-9mf@=%fz&w6#jzd3ba86(-_-3zw%8l_)l$i!+f5_5e73e+7a*3"
+SECRET_KEY = (
+    "django-insecure-9mf@=%fz&w6#jzd3ba86(-_-3zw%8l_)l$i!+f5_5e73e+7a*3"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -41,14 +43,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "klub_100kilo.apps.Klub100KiloConfig",
-    'drf_yasg',
+    "drf_yasg",
 ]
 
 
 WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'dist/',
-        'STATS_FILE': os.path.join(BASE_DIR, 'frontend/webpack-stats.json'),
+    "DEFAULT": {
+        "BUNDLE_DIR_NAME": "dist/",
+        "STATS_FILE": os.path.join(BASE_DIR, "frontend/webpack-stats.json"),
     }
 }
 
@@ -139,9 +141,9 @@ LOGIN_URL = "login"
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / "static",
 ]
 
 # Default primary key field type
@@ -151,7 +153,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
+    "default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}
 }
