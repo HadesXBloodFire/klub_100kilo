@@ -10,6 +10,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 from klub_100kilo.models import *
+from datetime import timedelta
 
 from django.contrib.auth import (
     authenticate,
@@ -41,9 +42,12 @@ def hero_page(request):
 
 @login_required
 def main_page(request):
+    user_id = get_user(request).user_id
     user_reservations = Reservations.objects.filter(
-        user_id=get_user(request).user_id, start__gt=timezone.now()
+        user_id=user_id, start__gt=timezone.now()
     )
+    goals = MeasurementsGoals.objects.filter(user_id=user_id)
+    trainings = Trainings.objects.filter(user_id=user_id)
     for reservation in user_reservations:
         try:
             reservation.trainer = Users.objects.get(
@@ -51,7 +55,7 @@ def main_page(request):
             )
         except Users.DoesNotExist:
             reservation.trainer = None
-    return render(request, "main.html", {"reservations": user_reservations})
+    return render(request, "main.html", {"reservations": user_reservations, "goals": goals, "trainings": trainings})
 
 
 def reservation_view(request):

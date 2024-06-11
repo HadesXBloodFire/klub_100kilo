@@ -8,7 +8,7 @@
       <div class="column is-one-third">
         <div class="card">
           <div class="card-content">
-            <p class="title">{{ reservation.start }}</p>
+            <p class="title">{{ reservation.start }} - {{ reservation.end|date:"H:i" }}</p>
             <p class="subtitle">
               {% if reservation.trainer %}
               Trener: {{ reservation.trainer.first_name }}
@@ -17,26 +17,63 @@
               Brak trenera
               {% endif %}
             </p>
-            <a href="#"><i class="edit-icon fas fa-pencil-alt"></i></a>
-            <a href="#"><i class="delete-icon fas fa-times"></i></a>
+            <a href="http://127.0.0.1:8000/book_trainer/"><i class="edit-icon fas fa-pencil-alt"></i></a>
+            <a href="#" class="delete-icon" data-id="{{ reservation.reservation_id }}"><i class="fas fa-times"></i></a>
           </div>
         </div>
       </div>
       {% endfor %}
     </div>
   </div>
-</section>
 <section class="section">
   <div class="container">
     <h2 class="title">Cele treningowe</h2>
-    <!-- Dodajemy tutaj karty z celami treningowymi -->
+    {% for goal in goals %}
+    <div class="card">
+      <div class="card-content">
+        <p class="title">{{ goal.start_date }}</p>
+        <p class="subtitle">Maksymalna liczba dni: {{ goal.max_days }} </p>
+      </div>
+    </div>
+    {% endfor %}
   </div>
 </section>
 
 <section class="section">
   <div class="container">
     <h2 class="title">Twoje treningi</h2>
-    <!-- Dodajemy tutaj karty z treningami użytkownika -->
+    {% for training in trainings %}
+    <div class="card">
+      <div class="card-content">
+        <p class="title">{{ training.name }}</p>
+      </div>
+    </div>
+    {% endfor %}
   </div>
+<script>
+document.querySelectorAll('.delete-icon').forEach(function(deleteIcon) {
+  deleteIcon.addEventListener('click', function(event) {
+    event.preventDefault();
+    var reservationId = this.getAttribute('data-id');
+    if (confirm("Are you sure you want to remove it?")) {
+      $.ajax({
+        type: "GET",
+        url: '/remove',
+        data: {'id': reservationId},
+        dataType: "json",
+        success: function(response) {
+          console.log('Success response:', response);
+          location.reload();
+          alert('Event Removed');
+        },
+        error: function(response) {
+          console.log('Error response:', response);
+          alert('There was an error. Please try again.');
+        }
+      });
+    }
+  });
+});
+</script>
 </section>
 {% endblock %}

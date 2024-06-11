@@ -5,7 +5,6 @@
   Dodaj cel
 </button>
 
-<!-- The Form -->
 <div id="goalFormContainer" style="display: none;">
   <form id="goal-form" method="POST" action="{% url 'add_goal' %}">
     {% csrf_token %}
@@ -104,7 +103,6 @@
               </form>
             </div>
 
-<!-- The JavaScript to Toggle the Form -->
 <script>
 document.getElementById('toggleGoalForm').addEventListener('click', function() {
   var formContainer = document.getElementById('goalFormContainer');

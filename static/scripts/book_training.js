@@ -20,22 +20,6 @@ $(document).ready(function () {
                    alert("Start and end times cannot be in the past");
                    return;
                }
-
-               $.ajax({
-                type: "GET",
-                url: '/check_overlap',
-                data: {'start': startDate, 'end': endDate},
-                dataType: "json",
-                success: function (data) {
-                    if (data.overlap) {
-                        alert("You have another reservation at the same time");
-                        return;
-                    }
-                },
-                error: function (data) {
-                    alert('There is a problem!!!');
-                }
-               });
                 if (startDate < currentDate || endDate < currentDate) {
                     alert("Cannot book for past dates");
                     return;
