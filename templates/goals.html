@@ -148,7 +148,7 @@ document.getElementById('toggleGoalForm').addEventListener('click', function() {
 <p>Procent wykonanych celów: {{ percentage }}%</p>
 
 <script>
-        var percentage = "{{ percentage }}"
-        document.getElementById('filler').style.width = percentage + '%';
-    </script>
+    var percentage = parseFloat("{{ percentage }}");
+    document.getElementById('filler').style.width = percentage + '%';
+</script>
 {% endblock %}
