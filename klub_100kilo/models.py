@@ -57,6 +57,7 @@ class MeasurementsGoals(models.Model):
     user = models.ForeignKey(
         Users, on_delete=models.DO_NOTHING, db_column="user_ID"
     )
+    name = models.CharField(max_length=100)
     start_date = models.DateField()
     max_days = models.IntegerField()
     weight = models.IntegerField(blank=True, null=True)
@@ -65,7 +66,7 @@ class MeasurementsGoals(models.Model):
     waist_size = models.IntegerField(blank=True, null=True)
     thighs_size = models.IntegerField(blank=True, null=True)
     height = models.IntegerField(blank=True, null=True)
-    status = models.CharField(max_length=1, default="N")  # Add this line
+    status = models.CharField(max_length=1, default="N")
 
     class Meta:
         db_table = "Measurements_Goals"

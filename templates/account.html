@@ -1,4 +1,5 @@
 {% extends 'base.html' %} {% block content %}
+<!--TODO: zmienianie danych w bazie, zmienianie hasła w bazie-->
 <section class="section">
   <div class="container">
     <h1 class="title">Profil użytkownika</h1>
@@ -6,7 +7,6 @@
       <h2 class="subtitle">Witaj, {{ user.first_name }}!</h2>
       <p>Twoje nazwisko: {{ user.last_name }}</p>
       <p>Twój email: {{ user.email }}</p>
-      <!-- Dodaj tutaj więcej szczegółów o użytkowniku -->
     </div>
     <a class="button is-primary" href="{% url 'edit_profile' %}">Edytuj profil</a>
     <a class="button is-danger" href="{% url 'change_password' %}">Zmień hasło</a>

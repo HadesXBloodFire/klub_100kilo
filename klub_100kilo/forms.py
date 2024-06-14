@@ -70,6 +70,8 @@ class EditProfileForm(forms.ModelForm):
         fields = ["first_name", "last_name", "email"]
 
 
+
+
 class ReservationPanel(forms.Form):
     pass
 
@@ -78,6 +80,7 @@ class GoalForm(forms.ModelForm):
     class Meta:
         model = MeasurementsGoals
         fields = [
+            "name",
             "start_date",
             "max_days",
             "weight",

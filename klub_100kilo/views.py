@@ -6,7 +6,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 from klub_100kilo.models import *
@@ -384,6 +384,13 @@ def add_goal(request):
         form = GoalForm()
     return render(request, "add_goal.html", {"form": form})
 
+@login_required
+@require_POST
+def delete_goal(request, goal_id):
+    goal = get_object_or_404(MeasurementsGoals, goal_id=goal_id, user=get_user(request))
+    goal.delete()
+    return redirect('goals')
+
 
 def update_goals_status(user):
     goals = MeasurementsGoals.objects.filter(user=user)
@@ -482,3 +489,10 @@ def mark_exercises_as_succeeded(request, training_id):
         training_id=training_id, exercise_id__in=checked_exercise_ids
     ).update(succeded=True)
     return redirect("workouts")
+
+@login_required
+@require_POST
+def delete_training(request, training_id):
+    training = get_object_or_404(Trainings, training_id=training_id, user=get_user(request))
+    training.delete()
+    return redirect('workouts')
