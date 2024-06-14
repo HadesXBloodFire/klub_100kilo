@@ -45,9 +45,7 @@ urlpatterns = [
     path("account/", account, name="account"),
     path(
         "account/change_password/",
-        auth_views.PasswordChangeView.as_view(
-            template_name="change_password.html"
-        ),
+        change_password,
         name="change_password",
     ),
     path("account/edit_profile/", edit_profile, name="edit_profile"),

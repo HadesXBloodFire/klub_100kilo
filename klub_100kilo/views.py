@@ -1,7 +1,6 @@
 import os
 import datetime
 
-
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -19,7 +18,7 @@ from django.contrib.auth import (
     login as auth_login,
 )
 
-from .forms import RegisterForm, LoginForm, EditProfileForm, GoalForm
+from .forms import RegisterForm, LoginForm, EditProfileForm, GoalForm, CustomPasswordChangeForm
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import logout
 from django.contrib import messages
@@ -126,6 +125,18 @@ def edit_profile(request):
     else:
         form = EditProfileForm(instance=request.user)
     return render(request, "edit_profile.html", {"form": form})
+
+
+@login_required
+def change_password(request):
+    if request.method == "POST":
+        form = CustomPasswordChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect("account")
+    else:
+        form = CustomPasswordChangeForm(instance=request.user)
+    return render(request, "change_password.html", {"form": form})
 
 
 def book_trainer(request):
@@ -384,6 +395,7 @@ def add_goal(request):
         form = GoalForm()
     return render(request, "add_goal.html", {"form": form})
 
+
 @login_required
 @require_POST
 def delete_goal(request, goal_id):
@@ -406,27 +418,27 @@ def update_goals_status(user):
             continue
 
         if (
-            goal.start_date
-            <= measurements.date
-            <= (goal.start_date + timedelta(days=goal.max_days))
+                goal.start_date
+                <= measurements.date
+                <= (goal.start_date + timedelta(days=goal.max_days))
         ):
             conditions = [
                 (goal.weight is None or measurements.weight <= goal.weight),
                 (
-                    goal.biceps_size is None
-                    or measurements.biceps_size >= goal.biceps_size
+                        goal.biceps_size is None
+                        or measurements.biceps_size >= goal.biceps_size
                 ),
                 (
-                    goal.bust_size is None
-                    or measurements.bust_size >= goal.bust_size
+                        goal.bust_size is None
+                        or measurements.bust_size >= goal.bust_size
                 ),
                 (
-                    goal.waist_size is None
-                    or measurements.waist_size >= goal.waist_size
+                        goal.waist_size is None
+                        or measurements.waist_size >= goal.waist_size
                 ),
                 (
-                    goal.thighs_size is None
-                    or measurements.thighs_size >= goal.thighs_size
+                        goal.thighs_size is None
+                        or measurements.thighs_size >= goal.thighs_size
                 ),
                 (goal.height is None or measurements.height >= goal.height),
             ]
@@ -489,6 +501,7 @@ def mark_exercises_as_succeeded(request, training_id):
         training_id=training_id, exercise_id__in=checked_exercise_ids
     ).update(succeded=True)
     return redirect("workouts")
+
 
 @login_required
 @require_POST
