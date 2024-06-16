@@ -8,7 +8,8 @@
       <div class="column is-one-third">
         <div class="card">
           <div class="card-content">
-            <p class="title">{{ reservation.start }} - {{ reservation.end|date:"H:i" }}</p>
+            <p class="title">{{ reservation.name }}</p>
+            <p class="subtitle">{{ reservation.start }} - {{ reservation.end|date:"H:i" }}</p>
             <p class="subtitle">
               {% if reservation.trainer %}
               Trener: {{ reservation.trainer.first_name }}

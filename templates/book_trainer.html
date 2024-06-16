@@ -10,7 +10,7 @@
           <div class="select">
             <select name="reservation">
               {% for reservation in reservations %}
-              <option value="{{ reservation.reservation_id }}">{{ reservation.start|date:"d F Y, H:i" }} </option>
+              <option value="{{ reservation.reservation_id }}">{{ reservation.start }} - {{ reservation.end|date:"H:i" }} </option>
               {% endfor %}
             </select>
           </div>
@@ -23,7 +23,7 @@
             <select name="trainer">
               {% for trainer in trainers %}
               <option value="{{ trainer.user.user_id }}">
-                {{ trainer.user.first_name }} {{ trainer.user.last_name }}
+                {{ trainer.user.first_name }} {{ trainer.user.last_name }} {{ trainer.hourly_cost }} zł/h {{ trainer.specialization }}
               </option>
               {% endfor %}
             </select>
