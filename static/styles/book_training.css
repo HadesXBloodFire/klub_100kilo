@@ -1,46 +1,48 @@
-/* Stylowanie nagłówka kalendarza */
 .fc-header-toolbar {
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
     padding: 1rem !important;
-    background-color: #2E2E2E !important;  /* Kolor tła nagłówka */
-    color: #FFFFFF !important;  /* Kolor tekstu nagłówka */
+    background-color: #2E2E2E !important;
+    color: #FFFFFF !important;
 }
 
-/* Stylowanie przycisków w nagłówku kalendarza */
 .fc-header-toolbar .fc-button {
-    background-color: #4D4D4D !important;  /* Kolor tła przycisku */
-    color: #FFFFFF !important;  /* Kolor tekstu przycisku */
+    background-color: #4D4D4D !important;
+    color: #FFFFFF !important;
     border: none !important;
     border-radius: 4px !important;
     padding: 0.5rem 1rem !important;
 }
 
 .fc-header-toolbar .fc-button:hover {
-    background-color: #4D4D4D !important;  /* Kolor tła przycisku po najechaniu */
+    background-color: #4D4D4D !important;
 }
 
 
 
-/* Stylowanie dni tygodnia */
 .fc-day-header {
-    background-color: #F8B195 !important;  /* Kolor tła dni tygodnia */
-    color: #355C7D !important;  /* Kolor tekstu dni tygodnia */
+    background-color: #F8B195 !important;
+    color: #355C7D !important;
     padding: 1rem !important;
     border: none !important;
 }
 
 
 
-/* Stylowanie komórek kalendarza */
 .fc-day, .fc-event {
     border: none !important;
 }
 
 .fc-event {
-    background-color: #C06C84 !important;  /* Kolor tła wydarzenia */
-    color: #FFFFFF !important;  /* Kolor tekstu wydarzenia */
+    background-color: #C06C84 !important;
+    color: #FFFFFF !important;
     padding: 0.5rem !important;
     border-radius: 4px !important;
+}
+
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

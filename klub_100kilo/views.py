@@ -300,9 +300,11 @@ def get_reservations(request):
 @login_required
 @csrf_exempt
 def book_training(request):
-    all_events = Events.objects.all()
+    all_events = Reservations.objects.all()
+    all_gyms = Gyms.objects.all()
     context = {
         "events": all_events,
+        "gyms": all_gyms,
     }
     return render(request, "book_training.html", context)
 
@@ -311,12 +313,14 @@ def all_events(request):
     all_events = Reservations.objects.filter(user_id=get_user(request).user_id)
     out = []
     for event in all_events:
+        gym_name = event.gym.name if event.gym else "Brak silownii"
         out.append(
             {
-                "title": event.name,
+                "title": f"{event.name} \n silownia: {gym_name}",
                 "id": event.reservation_id,
                 "start": event.start.strftime("%m/%d/%Y, %H:%M:%S"),
                 "end": event.end.strftime("%m/%d/%Y, %H:%M:%S"),
+                "gym_id": event.gym_id,
             }
         )
 
@@ -328,12 +332,13 @@ def add_event(request):
     end = request.GET.get("end", None)
     title = request.GET.get("title", None)
     user_id = get_user(request).user_id
+    gym_id = request.GET.get("gym_id", None)
     event = Reservations(
         name=str(title),
         start=start,
         end=end,
         user_id=user_id,
-        gym_id=1,
+        gym_id=gym_id,
         status="P",
         type="Training",
     )
@@ -347,10 +352,12 @@ def update(request):
     end = request.GET.get("end", None)
     title = request.GET.get("title", None)
     id = request.GET.get("id", None)
+    gym_id = request.GET.get("gym_id", None)
     event = Reservations.objects.get(reservation_id=id)
     event.start = start
     event.end = end
     event.name = title
+    event.gym_id = gym_id
     event.save()
     data = {}
     return JsonResponse(data)
@@ -362,7 +369,6 @@ def remove(request):
     event.delete()
     data = {}
     return JsonResponse(data)
-    return Response({"message": "Reservation created successfully."})
 
 
 @csrf_exempt

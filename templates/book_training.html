@@ -45,6 +45,19 @@
       </div>
     </nav>
 
+    <div class="field centered">
+      <label class="label">Wybierz siłownię</label>
+      <div class="control">
+        <div class="select">
+          <select id="gym-select">
+            {% for gym in gyms %}
+            <option value="{{ gym.gym_id }}">{{ gym.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+
     <main style="flex: 1; padding: 1rem">
         <div class="container">
              <div class="row">
