@@ -45,9 +45,7 @@ urlpatterns = [
     path("account/", account, name="account"),
     path(
         "account/change_password/",
-        auth_views.PasswordChangeView.as_view(
-            template_name="change_password.html"
-        ),
+        change_password,
         name="change_password",
     ),
     path("account/edit_profile/", edit_profile, name="edit_profile"),
@@ -87,8 +85,10 @@ urlpatterns = [
     path("remove/", remove, name="remove"),
     path("goals/", goals_view, name="goals"),
     path("add_goal/", add_goal, name="add_goal"),
+    path("delete_goal/<int:goal_id>/", delete_goal, name='delete_goal'),
     path("workouts/", workouts_view, name="workouts"),
     path("workouts/create_training/", create_training, name="create_training"),
+    path("delete_training/<int:training_id>/", delete_training, name='delete_training'),
     path(
         "workouts/mark_exercises_as_succeeded/<int:training_id>/",
         mark_exercises_as_succeeded,

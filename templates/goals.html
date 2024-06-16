@@ -1,6 +1,5 @@
 {% extends 'base.html' %} {% block content %}
 <link rel="stylesheet" href="../static/styles/goals.css" />
-<!-- Button to Toggle the Form -->
 <button id="toggleGoalForm" class="btn btn-primary">
   Dodaj cel
 </button>
@@ -12,6 +11,16 @@
       <section class="section">
         <div class="container">
           <h1 class="title">Dodaj cel</h1>
+            <div class="field">
+              <div class="control">
+                <div class="input-label">
+                  <label class="label">Nazwa celu</label>
+                </div>
+                <div class="input-field">
+                  <input class="input" type="text" id="name" name="name" required />
+                </div>
+              </div>
+            </div>
             <div class="field">
               <div class="control">
                 <div class="input-label">
@@ -116,6 +125,7 @@ document.getElementById('toggleGoalForm').addEventListener('click', function() {
 
 <table>
     <tr>
+        <th>Nazwa</th>
         <th>Data rozpoczęcia</th>
         <th>Maksymalna liczba dni</th>
         <th>Waga</th>
@@ -128,6 +138,7 @@ document.getElementById('toggleGoalForm').addEventListener('click', function() {
     </tr>
     {% for goal in goals %}
     <tr>
+        <td>{{ goal.name }}</td>
         <td>{{ goal.start_date }}</td>
         <td>{{ goal.max_days }}</td>
         <td>{{ goal.weight }}</td>
@@ -137,6 +148,12 @@ document.getElementById('toggleGoalForm').addEventListener('click', function() {
         <td>{{ goal.thighs_size }}</td>
         <td>{{ goal.height }}</td>
         <td>{{ goal.status }}</td>
+        <td>
+        <form method="POST" action="{% url 'delete_goal' goal.goal_id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Usuń cel</button>
+        </form>
+        </td>
     </tr>
     {% endfor %}
 </table>

@@ -35,7 +35,11 @@
                     <input type="checkbox" id="exercise-{{ training.training_id }}-{{ training_exercise.exercise.exercise_id }}" name="exercises" value="{{ training_exercise.exercise.exercise_id }}" {% if training_exercise.succeded %}checked{% endif %}>
                     <label for="exercise-{{ training.training_id }}-{{ training_exercise.exercise.exercise_id }}">{{ training_exercise.exercise.description }}</label><br>
                 {% endfor %}
-                <input type="submit" value="Update">
+                <input type="submit" value="Zapisz">
+            </form>
+            <form method="POST" action="{% url 'delete_training' training.training_id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Usuń trening</button>
             </form>
         </div>
     {% endfor %}
@@ -44,7 +48,7 @@
     window.onload = function() {
         var nameInput = document.getElementById('training-name');
         var checkboxes = document.getElementsByName('exercises');
-        var submitButton = document.querySelector('input[type="submit"]');
+        var submitButton = document.getElementById('toggleCreateTrainingForm');
 
         function checkInputs() {
             var nameGiven = nameInput.value !== '';
