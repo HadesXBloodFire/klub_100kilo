@@ -314,9 +314,14 @@ def all_events(request):
     out = []
     for event in all_events:
         gym_name = event.gym.name if event.gym else "Brak silownii"
+        trainer_name = "Brak trenera"
+        if event.trainer_id:
+            trainer = Users.objects.get(user_id=event.trainer_id)
+            trainer_name = f"{trainer.first_name} {trainer.last_name}"
         out.append(
             {
-                "title": f"{event.name} \n silownia: {gym_name}",
+                "title": f"{event.name} \n silownia: {gym_name} \n"
+                         f"trener: {trainer_name}",
                 "id": event.reservation_id,
                 "start": event.start.strftime("%m/%d/%Y, %H:%M:%S"),
                 "end": event.end.strftime("%m/%d/%Y, %H:%M:%S"),
