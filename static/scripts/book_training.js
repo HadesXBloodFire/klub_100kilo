@@ -11,17 +11,15 @@ $(document).ready(function () {
            editable: true,
            eventLimit: true,
            select: function (start, end, allDay) {
-               var title = prompt("Enter Event Title");
+               var title = prompt("Nazwa rezerwacji:");
                var startDate = new Date(start);
                var endDate = new Date(end);
                var currentDate = new Date();
+               var gym_id = document.getElementById("gym-select").value;
 
-               if (startDate < currentDate || endDate < currentDate) {
-                   alert("Start and end times cannot be in the past");
-                   return;
-               }
+
                 if (startDate < currentDate || endDate < currentDate) {
-                    alert("Cannot book for past dates");
+                    alert("Nie mozesz zarezerwowac treningu na przeszlosc");
                     return;
                 }
 
@@ -32,14 +30,14 @@ $(document).ready(function () {
                    $.ajax({
                        type: "GET",
                        url: '/add_event',
-                       data: {'title': title, 'start': start, 'end': end},
+                       data: {'title': title, 'start': start, 'end': end, 'gym_id': gym_id},
                        dataType: "json",
                        success: function (data) {
                            calendar.fullCalendar('refetchEvents');
-                           alert("Added Successfully");
+                           alert("Rezerwacaj zostala dodana!!!");
                        },
                        error: function (data) {
-                           alert('There is a problem!!!');
+                           alert('Cos poszlo nie tak!!!');
                        }
                    });
                }
@@ -47,19 +45,20 @@ $(document).ready(function () {
            eventResize: function (event) {
                var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
                var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
-               var title = event.title;
+               var title = event.title.split('\n')[0];
                var id = event.id;
+               var gym_id = document.getElementById("gym-select").value;
                $.ajax({
                    type: "GET",
                    url: '/update',
-                   data: {'title': title, 'start': start, 'end': end, 'id': id},
+                   data: {'title': title, 'start': start, 'end': end, 'id': id, 'gym_id': gym_id},
                    dataType: "json",
                    success: function (data) {
                        calendar.fullCalendar('refetchEvents');
-                       alert('Event Update');
+                       alert('Rezerwacja zostala zaktualizowana!!!');
                    },
                    error: function (data) {
-                       alert('There is a problem!!!');
+                       alert('Cos poszlo nie tak!!!');
                    }
                });
            },
@@ -67,25 +66,26 @@ $(document).ready(function () {
            eventDrop: function (event) {
                var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
                var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
-               var title = event.title;
+               var title = event.title.split('\n')[0]; // This will get the title without the gym name
                var id = event.id;
+               var gym_id = document.getElementById("gym-select").value;
                $.ajax({
                    type: "GET",
                    url: '/update',
-                   data: {'title': title, 'start': start, 'end': end, 'id': id},
+                   data: {'title': title, 'start': start, 'end': end, 'id': id, 'gym_id': gym_id},
                    dataType: "json",
                    success: function (data) {
                        calendar.fullCalendar('refetchEvents');
-                       alert('Event Update');
+                       alert('Rezerwacja zostala zaktualizowana!!!');
                    },
                    error: function (data) {
-                       alert('There is a problem!!!');
+                       alert('Cos poszlo nie tak!!!');
                    }
                });
            },
 
            eventClick: function (event) {
-               if (confirm("Are you sure you want to remove it?")) {
+               if (confirm("Na pewno chcesz usunac rezerwacje?")) {
                    var id = event.id;
                    $.ajax({
                        type: "GET",
@@ -94,10 +94,10 @@ $(document).ready(function () {
                        dataType: "json",
                        success: function (data) {
                            calendar.fullCalendar('refetchEvents');
-                           alert('Event Removed');
+                           alert('Rezerwacja usunieta!!!');
                        },
                        error: function (data) {
-                           alert('There is a problem!!!');
+                           alert('Cos poszlo nie tak!!!');
                        }
                    });
                }
