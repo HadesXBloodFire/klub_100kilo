@@ -1,47 +1,56 @@
 {% extends 'base.html' %}
 {% block content %}
 <link rel="stylesheet" href="../static/styles/workouts.css" />
-<div id="create-training-popup" class="popup">
-    <form method="POST" action="{% url 'create_training' %}">
-        {% csrf_token %}
-        <input type="text" id="training-name" name="name" placeholder="Training name" required>
-        <button id="toggleCreateTrainingForm" class="btn btn-primary">
-          Utwórz trening
-        </button>
-        <div id="exercises-list">
-            {% for exercise in exercises %}
-                <label>
-                    <input type="checkbox" id="exercise-{{ exercise.exercise_id }}" name="exercises" value="{{ exercise.exercise_id }}">
-                    {{ exercise.description }}
-                </label>
-            {% endfor %}
-        </div>
-    </form>
-</div>
-
 <div id="trainings-list">
-    {% for training in trainings %}
-        <div>
-            <div class="training-name" onclick="document.getElementById('view-training-popup-{{ training.training_id }}').style.display='block'">
-                {{ training.name }}
+    {% for reservation in reservations %}
+        {% if reservation.training_id %}
+            <div class="card">
+                <div class="card-content">
+                    <p class="title">{{ reservation.name }}</p>
+                    <p class="subtitle">{{ reservation.start }} - {{ reservation.end|date:"H:i" }}</p>
+                    <div>
+                        <div class="training-name" onclick="document.getElementById('view-training-popup-{{ reservation.training_id }}').style.display='block'">
+                            {{ training.name }}
+                        </div>
+
+                    </div>
+
+                    <div id="view-training-popup-{{ reservation.training_id }}" class="popup">
+                        <form method="POST" action="{% url 'mark_exercises_as_succeeded' reservation.training_id %}">
+                            {% csrf_token %}
+                            {% for training_exercise in reservation.training.traningsexercises_set.all %}
+                                <input type="checkbox" id="exercise-{{ reservation.training.training_id }}-{{ training_exercise.exercise.exercise_id }}" name="exercises" value="{{ training_exercise.exercise.exercise_id }}" {% if training_exercise.succeded %}checked{% endif %}>
+                                <label for="exercise-{{ reservation.training.training_id }}-{{ training_exercise.exercise.exercise_id }}">{{ training_exercise.exercise.description }}</label><br>
+                            {% endfor %}
+                            <input type="submit" value="Zapisz">
+                        </form>
+                        <form method="POST" action="{% url 'delete_training' reservation.training_id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Usuń trening</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-
-        </div>
-
-        <div id="view-training-popup-{{ training.training_id }}" class="popup">
-            <form method="POST" action="{% url 'mark_exercises_as_succeeded' training.training_id %}">
-                {% csrf_token %}
-                {% for training_exercise in training.traningsexercises_set.all %}
-                    <input type="checkbox" id="exercise-{{ training.training_id }}-{{ training_exercise.exercise.exercise_id }}" name="exercises" value="{{ training_exercise.exercise.exercise_id }}" {% if training_exercise.succeded %}checked{% endif %}>
-                    <label for="exercise-{{ training.training_id }}-{{ training_exercise.exercise.exercise_id }}">{{ training_exercise.exercise.description }}</label><br>
-                {% endfor %}
-                <input type="submit" value="Zapisz">
-            </form>
-            <form method="POST" action="{% url 'delete_training' training.training_id %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger">Usuń trening</button>
-            </form>
-        </div>
+        {% else %}
+            <div class="card">
+                <div class="card-content">
+                    <p class="title">{{ reservation.name }}</p>
+                    <p class="subtitle">{{ reservation.start }} - {{ reservation.end|date:"H:i" }}</p>
+                    <form action="{% url 'create_training' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="reservation_id" value="{{ reservation.reservation_id }}">
+                    <input type="text" id="training-name" name="name" placeholder="Nazwa treningu" required>
+                    {% for exercise in exercises %}
+                    <div>
+                        <input type="checkbox" id="exercise{{ exercise.exercise_id }}" name="exercises" value="{{ exercise.exercise_id }}">
+                        <label for="exercise{{ exercise.exercise_id }}">{{ exercise.description }}</label>
+                    </div>
+                    {% endfor %}
+                    <input type="submit" id="toggleCreateTrainingForm" value="Utwórz trening">
+                </form>
+                </div>
+            </div>
+        {% endif %}
     {% endfor %}
 </div>
 <script>

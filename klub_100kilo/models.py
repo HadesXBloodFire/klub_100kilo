@@ -1,5 +1,8 @@
+from django.utils import timezone
+
 from django.db import models
 from django.contrib.auth.models import User
+from rest_framework.exceptions import ValidationError
 
 
 class Users(models.Model):
@@ -84,6 +87,7 @@ class Reservations(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
     start = models.DateTimeField(null=True, blank=True)
     end = models.DateTimeField(null=True, blank=True)
+    training_id = models.IntegerField(blank=True, null=True)
 
     def clean(self):
         super().clean()
