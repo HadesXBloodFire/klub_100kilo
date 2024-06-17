@@ -40,6 +40,46 @@
   </div>
 </section>
 
+  <section class="section">
+  <div class="container">
+    <h2 class="title">Ostatnie treningi</h2>
+    <div class="columns is-multiline">
+      {% for reservation in past_reservations %}
+      <div class="column is-one-third">
+        <div class="card">
+          <div class="card-content">
+            <p class="title">{{ reservation.name }}</p>
+            <p class="subtitle">{{ reservation.start }} - {{ reservation.end|date:"H:i" }}</p>
+            <p class="subtitle">
+              {% if reservation.trainer %}
+              Trener: {{ reservation.trainer.first_name }} {{ reservation.trainer.last_name }}
+              {% else %}
+              Brak trenera
+              {% endif %}
+            </p>
+            <p class="subtitle">
+              {% if reservation.training_id %}
+              Trening: {{ reservation.training.name }}
+              Ćwiczenia:
+              <ul>
+                {% for training_exercise in reservation.training.traningsexercises_set.all %}
+                {% if training_exercise.succeded %}
+                <li>{{ training_exercise.exercise.description }}</li>
+                {% endif %}
+                {% endfor %}
+              </ul>
+              {% else %}
+              Brak treningu
+              {% endif %}
+            </p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
 <section class="section">
   <div class="container">
     <h2 class="title">Twoje treningi</h2>

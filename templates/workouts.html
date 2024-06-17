@@ -10,7 +10,7 @@
                     <p class="subtitle">{{ reservation.start }} - {{ reservation.end|date:"H:i" }}</p>
                     <div>
                         <div class="training-name" onclick="document.getElementById('view-training-popup-{{ reservation.training_id }}').style.display='block'">
-                            {{ training.name }}
+                            {{ reservation.training.name }}
                         </div>
 
                     </div>
