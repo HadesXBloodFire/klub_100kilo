@@ -457,18 +457,22 @@ def update_goals_status(user):
 def workouts_view(request):
     trainings = Trainings.objects.filter(user=get_user(request))
     exercises = Exercises.objects.all()
+    reservations = Reservations.objects.filter(user=get_user(request))
+    for reservation in reservations:
+        if Trainings.objects.filter(training_id=reservation.training_id).exists():
+            reservation.training = Trainings.objects.get(training_id=reservation.training_id)
     return render(
         request,
         "workouts.html",
-        {"trainings": trainings, "exercises": exercises},
+        {"trainings": trainings, "exercises": exercises, "reservations": reservations},
     )
 
 
 @require_POST
 @login_required
 def create_training(request):
-    print(request.POST)
     name = request.POST.get("name")
+    reservation_id = request.POST.get("reservation_id")
     exercise_ids = request.POST.getlist("exercises")
     exercise_ids = list(filter(None, exercise_ids))
     if not exercise_ids:
@@ -485,6 +489,9 @@ def create_training(request):
             training=training, exercise=exercise
         )
         training_exercise.save()
+    reservation = Reservations.objects.get(reservation_id=reservation_id)
+    reservation.training_id = training.training_id
+    reservation.save()
     return redirect("workouts")
 
 
@@ -512,6 +519,10 @@ def mark_exercises_as_succeeded(request, training_id):
 @login_required
 @require_POST
 def delete_training(request, training_id):
-    training = get_object_or_404(Trainings, training_id=training_id, user=get_user(request))
+    training = get_object_or_404(Trainings, training_id=training_id)
+    reservation = get_object_or_404(Reservations, training_id=training_id, user=get_user(request))
+    reservation.training_id = None
+    reservation.save()
     training.delete()
+
     return redirect('workouts')
