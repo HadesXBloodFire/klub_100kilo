@@ -77,7 +77,6 @@ urlpatterns = [
         post_diets,
         name="post_diets",
     ),
-    path("api/reservations/", get_reservations, name="get_reservations"),
     path("book_training/", book_training, name="book_training"),
     path("all_events/", all_events, name="all_events"),
     path("add_event/", add_event, name="add_event"),
