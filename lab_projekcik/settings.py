@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 import os
 import sys
 
@@ -94,12 +95,12 @@ ASGI_APPLICATION = "lab_projekcik.asgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "mwilewsk",
-        "USER": "mwilewsk",
-        "PASSWORD": "rHZCf191jq76jcCm",
-        "HOST": "mysql.agh.edu.pl",
-        "PORT": "3306",
+        "ENGINE": config('ENGINE'),
+        "NAME": config('NAME'),
+        "USER": config('USER'),
+        "PASSWORD": config('PASSWORD'),
+        "HOST": config('HOST'),
+        "PORT": config('PORT'),
     }
 }
 
