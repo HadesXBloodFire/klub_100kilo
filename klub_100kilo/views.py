@@ -45,7 +45,9 @@ def main_page(request):
     user_reservations = Reservations.objects.filter(
         user_id=user_id, start__gt=timezone.now()
     )
-    goals = MeasurementsGoals.objects.filter(user_id=user_id)
+    all_goals = MeasurementsGoals.objects.filter(user_id=user_id)
+    current_date = timezone.now().date()
+    goals = [goal for goal in all_goals if goal.start_date <= current_date <= (goal.start_date + timedelta(days=goal.max_days))]
     trainings = Trainings.objects.filter(user_id=user_id)
     for reservation in user_reservations:
         try:
@@ -288,13 +290,6 @@ def diet_view(request):
     return render(
         request, "diet.html", {"diets": diets, "today_diet": today_diet}
     )
-
-
-@api_view(["GET"])
-def get_reservations(request):
-    reservations = Reservations.objects.all()
-    serializer = ReservationSerializer(reservations, many=True)
-    return Response(serializer.data)
 
 
 @login_required
