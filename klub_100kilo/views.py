@@ -48,7 +48,17 @@ def main_page(request):
     all_goals = MeasurementsGoals.objects.filter(user_id=user_id)
     current_date = timezone.now().date()
     goals = [goal for goal in all_goals if goal.start_date <= current_date <= (goal.start_date + timedelta(days=goal.max_days))]
-    trainings = Trainings.objects.filter(user_id=user_id)
+    trainings = Trainings.objects.filter(user_id=user_id, took_place=False)
+    past_reservations = Reservations.objects.filter(user_id=user_id, end__lt=timezone.now())
+    for reservation in user_reservations:
+        if Trainings.objects.filter(training_id=reservation.training_id).exists():
+            reservation.training = Trainings.objects.get(training_id=reservation.training_id)
+            if reservation.end < timezone.now():
+                reservation.training.took_place = True
+                reservation.training.save()
+    for reservation in past_reservations:
+        if Trainings.objects.filter(training_id=reservation.training_id).exists():
+            reservation.training = Trainings.objects.get(training_id=reservation.training_id)
     for reservation in user_reservations:
         try:
             reservation.trainer = Users.objects.get(
@@ -56,7 +66,7 @@ def main_page(request):
             )
         except Users.DoesNotExist:
             reservation.trainer = None
-    return render(request, "main.html", {"reservations": user_reservations, "goals": goals, "trainings": trainings})
+    return render(request, "main.html", {"reservations": user_reservations, "goals": goals, "trainings": trainings, "past_reservations": past_reservations})
 
 
 def reservation_view(request):
@@ -462,10 +472,13 @@ def update_goals_status(user):
 def workouts_view(request):
     trainings = Trainings.objects.filter(user=get_user(request))
     exercises = Exercises.objects.all()
-    reservations = Reservations.objects.filter(user=get_user(request))
+    reservations = Reservations.objects.filter(user=get_user(request), start__gt=timezone.now())
     for reservation in reservations:
         if Trainings.objects.filter(training_id=reservation.training_id).exists():
             reservation.training = Trainings.objects.get(training_id=reservation.training_id)
+            if reservation.end < timezone.now():
+                reservation.training.took_place = True
+                reservation.training.save()
     return render(
         request,
         "workouts.html",
