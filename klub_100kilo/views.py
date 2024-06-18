@@ -53,12 +53,11 @@ def main_page(request):
     for reservation in user_reservations:
         if Trainings.objects.filter(training_id=reservation.training_id).exists():
             reservation.training = Trainings.objects.get(training_id=reservation.training_id)
-            if reservation.end < timezone.now():
-                reservation.training.took_place = True
-                reservation.training.save()
     for reservation in past_reservations:
         if Trainings.objects.filter(training_id=reservation.training_id).exists():
             reservation.training = Trainings.objects.get(training_id=reservation.training_id)
+            reservation.training.took_place = True
+            reservation.training.save()
     for reservation in user_reservations:
         try:
             reservation.trainer = Users.objects.get(
