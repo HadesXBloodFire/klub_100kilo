@@ -1,7 +1,5 @@
 # Klub 100 Kilo
 
-## Temporary README
-
 ### Wymagania wstępne:
 - VPN lub połączenie z siecią AGH / użycie własnej bazy danych
 - Zainstalowany Docker lub Poetry
@@ -29,12 +27,12 @@ Wchodzimy w katalog projektu i wywołujemy komendę:
 
 Następnie uruchamiamy środowisko Poetry:
     ```
-    poetry install
+    poetry shell
     ```
 
 Na koniec uruchamiamy serwer Django:
     ```
-    poetry install
+    Python3 manage.py runserver
     ```
 
 ## Aplikacja będzie dostępna pod adresem 
